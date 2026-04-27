@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Just. Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a1a0e;--g1:#2d6645;--g2:#3d8a5c;--g4:#7ecf96;--g6:#e4f7ec;--off:#f6fcf8;--sub:#4a6852;--err:#dc2626;--warn:#d97706;--card:#fff}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--ink);min-height:100vh}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:var(--ink);border-radius:20px;padding:40px 32px;width:100%;max-width:360px;text-align:center}
+.login-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:2rem;color:#fff;margin-bottom:4px}
+.login-logo span{color:var(--g4)}
+.login-sub{color:rgba(255,255,255,0.4);font-size:0.8rem;margin-bottom:32px}
+.login-box input{width:100%;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#fff;font-family:inherit;font-size:0.9rem;outline:none;transition:border-color 0.2s;margin-bottom:12px}
+.login-box input:focus{border-color:var(--g4)}
+.login-box input::placeholder{color:rgba(255,255,255,0.25)}
+.btn-login{width:100%;background:var(--g1);color:#fff;border:none;border-radius:10px;padding:13px;font-family:"Syne",sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:background 0.2s;margin-top:4px}
+.btn-login:hover{background:var(--g2)}
+.login-err{color:#f87171;font-size:0.78rem;margin-top:10px;display:none}
+
+/* ADMIN */
+#admin-screen{display:none;min-height:100vh}
+.admin-nav{background:var(--ink);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.admin-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.1rem;color:#fff}
+.admin-logo span{color:var(--g4)}
+.admin-badge{background:rgba(126,207,150,0.15);border:1px solid rgba(126,207,150,0.2);color:var(--g4);font-size:0.6rem;font-weight:700;letter-spacing:0.1em;padding:3px 8px;border-radius:50px;text-transform:uppercase}
+.btn-logout{background:none;border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);border-radius:8px;padding:5px 12px;font-size:0.72rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-logout:hover{border-color:rgba(255,255,255,0.3);color:#fff}
+
+.admin-wrap{padding:20px;max-width:700px;margin:0 auto}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:12px;padding:14px 16px;border:1.5px solid rgba(45,102,69,0.1)}
+.stat-n{font-family:"Syne",sans-serif;font-weight:800;font-size:1.6rem;color:var(--g1)}
+.stat-l{font-size:0.68rem;color:var(--sub);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
+
+.section-title{font-family:"Syne",sans-serif;font-weight:700;font-size:0.95rem;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.btn-refresh{background:none;border:1.5px solid rgba(45,102,69,0.2);color:var(--g1);border-radius:8px;padding:5px 12px;font-size:0.72rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-refresh:hover{background:var(--g6)}
+
+/* PARTNER CARDS */
+.partner-card{background:var(--card);border-radius:14px;padding:16px;border:1.5px solid rgba(45,102,69,0.1);margin-bottom:10px;transition:all 0.2s}
+.partner-card.inactive{opacity:0.6;border-style:dashed}
+.pc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.pc-avatar{width:44px;height:44px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-family:"Syne",sans-serif;font-weight:700;color:#fff;font-size:1rem;flex-shrink:0;overflow:hidden}
+.pc-avatar img{width:100%;height:100%;object-fit:cover}
+.pc-info{flex:1}
+.pc-name{font-weight:700;font-size:0.92rem}
+.pc-meta{font-size:0.73rem;color:var(--sub);margin-top:1px}
+.pc-status{display:inline-flex;align-items:center;gap:4px;font-size:0.62rem;font-weight:700;letter-spacing:0.06em;padding:3px 8px;border-radius:50px;text-transform:uppercase}
+.pc-status.active{background:rgba(45,102,69,0.1);color:var(--g1)}
+.pc-status.inactive{background:rgba(220,38,38,0.08);color:var(--err)}
+.pc-details{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.pc-detail{font-size:0.75rem;color:var(--sub)}
+.pc-detail strong{color:var(--ink);font-weight:600}
+.pc-cats{font-size:0.72rem;background:var(--g6);color:var(--g1);padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:10px;font-weight:500}
+.pc-actions{display:flex;gap:8px}
+.btn-toggle{flex:1;padding:8px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;border:1.5px solid;transition:all 0.2s}
+.btn-toggle.deactivate{background:rgba(217,119,6,0.08);border-color:rgba(217,119,6,0.3);color:var(--warn)}
+.btn-toggle.activate{background:var(--g6);border-color:rgba(45,102,69,0.3);color:var(--g1)}
+.btn-delete{padding:8px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;background:rgba(220,38,38,0.07);border:1.5px solid rgba(220,38,38,0.2);color:var(--err);transition:all 0.2s}
+.btn-delete:hover{background:rgba(220,38,38,0.12)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.on{display:flex}
+.modal{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:340px;text-align:center}
+.modal h3{font-family:"Syne",sans-serif;font-weight:700;font-size:1rem;margin-bottom:8px}
+.modal p{font-size:0.82rem;color:var(--sub);margin-bottom:20px;line-height:1.5}
+.modal-btns{display:flex;gap:8px}
+.btn-cancel{flex:1;padding:10px;border-radius:8px;border:1.5px solid rgba(45,102,69,0.2);background:none;color:var(--ink);font-family:inherit;font-weight:600;font-size:0.82rem;cursor:pointer}
+.btn-confirm-del{flex:1;padding:10px;border-radius:8px;border:none;background:var(--err);color:#fff;font-family:inherit;font-weight:600;font-size:0.82rem;cursor:pointer}
+
+.loading{text-align:center;padding:40px;color:var(--sub);font-size:0.85rem}
+.spinner{display:inline-block;width:20px;height:20px;border:2.5px solid rgba(45,102,69,0.2);border-top-color:var(--g2);border-radius:50%;animation:spin 0.7s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:50px;font-size:0.8rem;font-weight:500;opacity:0;transition:all 0.25s;pointer-events:none;z-index:9999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Just<span>.</span></div>
+    <div class="login-sub">Admin-paneeli</div>
+    <input type="password" id="pwd-input" placeholder="Salasana" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-login" onclick="login()">Kirjaudu sisään</button>
+    <div class="login-err" id="login-err">Väärä salasana</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <nav class="admin-nav">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="admin-logo">Just<span>.</span></div>
+      <div class="admin-badge">Admin</div>
+    </div>
+    <button class="btn-logout" onclick="logout()">Kirjaudu ulos</button>
+  </nav>
+
+  <div class="admin-wrap">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-n" id="stat-total">–</div><div class="stat-l">Tekijät yht.</div></div>
+      <div class="stat-card"><div class="stat-n" id="stat-active">–</div><div class="stat-l">Aktiivisia</div></div>
+      <div class="stat-card"><div class="stat-n" id="stat-cats">–</div><div class="stat-l">Kategoriat</div></div>
+    </div>
+
+    <div class="section-title">
+      Kaikki tekijät
+      <button class="btn-refresh" onclick="loadPartners()">↻ Päivitä</button>
+    </div>
+    <div id="partners-list"><div class="loading"><span class="spinner"></span>Ladataan...</div></div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="del-modal">
+  <div class="modal">
+    <h3>Poista tekijä?</h3>
+    <p id="del-modal-name">Tätä toimintoa ei voi peruuttaa.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Peruuta</button>
+      <button class="btn-confirm-del" onclick="confirmDelete()">Poista</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://mebuynheutnegvvofnrl.supabase.co';
+const SUPA_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYnV5bmhldXRuZWd2dm9mbnJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Njg0MDc5MSwiZXhwIjoyMDkyNDE2NzkxfQ.yF4w9oYkT_mKLzWUqvgc4Qw80Q-vZAjNSyPXCxXr4iI';
+const ADMIN_PWD = 'just2024admin';
+
+let partners = [];
+let deleteId = null;
+
+function login() {
+  const pwd = document.getElementById('pwd-input').value;
+  if (pwd === ADMIN_PWD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    loadPartners();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+
+function logout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('pwd-input').value = '';
+}
+
+async function loadPartners() {
+  document.getElementById('partners-list').innerHTML = '<div class="loading"><span class="spinner"></span>Ladataan...</div>';
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/partners?select=*&order=created_at.desc`, {
+      headers: { 'apikey': SUPA_SERVICE, 'Authorization': 'Bearer ' + SUPA_SERVICE }
+    });
+    partners = await res.json();
+    renderPartners();
+  } catch(e) {
+    document.getElementById('partners-list').innerHTML = '<div class="loading">Virhe: ' + e.message + '</div>';
+  }
+}
+
+function renderPartners() {
+  const cats = new Set();
+  partners.forEach(p => (p.service_category||'').split(',').forEach(c => c.trim() && cats.add(c.trim())));
+  document.getElementById('stat-total').textContent = partners.length;
+  document.getElementById('stat-active').textContent = partners.filter(p => p.active).length;
+  document.getElementById('stat-cats').textContent = cats.size;
+
+  if (!partners.length) {
+    document.getElementById('partners-list').innerHTML = '<div class="loading">Ei tekijöitä vielä.</div>';
+    return;
+  }
+
+  document.getElementById('partners-list').innerHTML = partners.map(p => {
+    const initials = (p.contact_name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const avatar = p.avatar_url
+      ? `<img src="${p.avatar_url}" onerror="this.parentNode.innerHTML='${initials}'">`
+      : initials;
+    const bioText = (p.bio||'').split('\n\nHINNASTO:')[0].trim();
+    const created = p.created_at ? new Date(p.created_at).toLocaleDateString('fi-FI') : '–';
+    return `
+    <div class="partner-card ${p.active?'':'inactive'}" id="pc-${p.id}">
+      <div class="pc-top">
+        <div class="pc-avatar">${avatar}</div>
+        <div class="pc-info">
+          <div class="pc-name">${p.contact_name||'–'}</div>
+          <div class="pc-meta">${p.company_name||'Itsenäinen'} · ${created}</div>
+        </div>
+        <span class="pc-status ${p.active?'active':'inactive'}">${p.active?'● Aktiivinen':'○ Ei aktiivinen'}</span>
+      </div>
+      <div class="pc-cats">${p.service_category||'–'}</div>
+      <div class="pc-details">
+        <div class="pc-detail"><strong>Sähköposti</strong><br>${p.email||'–'}</div>
+        <div class="pc-detail"><strong>Puhelin</strong><br>${p.phone||'–'}</div>
+        <div class="pc-detail"><strong>Kaupunki</strong><br>${p.city||'–'}</div>
+        <div class="pc-detail"><strong>Arvosana</strong><br>${p.rating||'–'} ⭐ · ${p.job_count||0} työtä</div>
+      </div>
+      ${bioText ? `<div style="font-size:0.75rem;color:var(--sub);margin-bottom:10px;line-height:1.5">${bioText.slice(0,120)}${bioText.length>120?'…':''}</div>` : ''}
+      <div class="pc-actions">
+        <button class="btn-toggle ${p.active?'deactivate':'activate'}" onclick="toggleActive(${p.id},${p.active})">
+          ${p.active ? '⏸ Deaktivoi' : '▶ Aktivoi'}
+        </button>
+        <button class="btn-delete" onclick="openDeleteModal(${p.id},'${(p.contact_name||'').replace(/'/g,"\\'")}')">🗑 Poista</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleActive(id, currentActive) {
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/partners?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPA_SERVICE, 'Authorization': 'Bearer ' + SUPA_SERVICE, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active: !currentActive })
+    });
+    showToast(currentActive ? 'Deaktivoitu' : 'Aktivoitu ✓');
+    loadPartners();
+  } catch(e) { showToast('Virhe: ' + e.message); }
+}
+
+function openDeleteModal(id, name) {
+  deleteId = id;
+  document.getElementById('del-modal-name').textContent = `Poistetaan: ${name}. Tätä ei voi peruuttaa.`;
+  document.getElementById('del-modal').classList.add('on');
+}
+
+function closeModal() {
+  deleteId = null;
+  document.getElementById('del-modal').classList.remove('on');
+}
+
+async function confirmDelete() {
+  if (!deleteId) return;
+  closeModal();
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/partners?id=eq.${deleteId}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPA_SERVICE, 'Authorization': 'Bearer ' + SUPA_SERVICE }
+    });
+    showToast('Tekijä poistettu ✓');
+    loadPartners();
+  } catch(e) { showToast('Virhe: ' + e.message); }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.getElementById('del-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('del-modal')) closeModal();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-t="page-title">Liity tekijäksi – Just.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a1a0e;--g1:#2d6645;--g2:#3d8a5c;--g4:#7ecf96;--g5:#b8eacc;--g6:#e4f7ec;--off:#f6fcf8;--sub:#4a6852;--gold:#c8a84b;--err:#e53e3e}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--ink);min-height:100vh}
+nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.2rem;color:#fff;text-decoration:none}
+.nav-logo span{color:var(--g4)}
+.nav-back{color:rgba(255,255,255,0.5);font-size:0.82rem;text-decoration:none}
+.nav-back:hover{color:var(--g4)}
+.nav-right{display:flex;align-items:center;gap:14px}
+.lang-sw{display:flex;gap:3px;background:rgba(255,255,255,0.07);border-radius:20px;padding:3px}
+.lb{background:none;color:rgba(255,255,255,0.5);border:none;padding:4px 10px;border-radius:14px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit}
+.lb.on{background:var(--g1);color:#fff}
+.hero{background:var(--ink);padding:52px 6% 56px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:60px;background:var(--off);clip-path:ellipse(55% 100% at 50% 100%)}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(126,207,150,0.12);border:1px solid rgba(126,207,150,0.2);color:var(--g4);padding:4px 12px;border-radius:50px;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:20px}
+.badge::before{content:"●";font-size:0.4rem;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero h1{font-family:"Syne",sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:1.05;margin-bottom:14px}
+.hero h1 em{font-style:italic;color:var(--g4)}
+.hero-sub{color:rgba(255,255,255,0.5);font-size:0.92rem;line-height:1.7;max-width:480px;font-weight:300}
+.wrap{padding:36px 6% 60px;max-width:680px;margin:0 auto}
+.type-lbl{font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--sub);margin-bottom:10px}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+.tc{border:2px solid rgba(45,102,69,0.15);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.2s;background:#fff;text-align:left;position:relative}
+.tc:hover{border-color:var(--g2);background:var(--g6)}
+.tc.on{border-color:var(--g1);background:var(--g6)}
+.tc-chk{position:absolute;top:14px;right:14px;width:20px;height:20px;border-radius:50%;background:var(--g1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.65rem;opacity:0;transform:scale(0.5);transition:all 0.18s}
+.tc.on .tc-chk{opacity:1;transform:scale(1)}
+.tc-ic{font-size:1.5rem;margin-bottom:8px;display:block}
+.tc-t{font-family:"Syne",sans-serif;font-weight:700;font-size:0.9rem;color:var(--ink);margin-bottom:2px}
+.tc-s{font-size:0.73rem;color:var(--sub);font-weight:300}
+.card{background:#fff;border-radius:16px;padding:22px;margin-bottom:14px;border:1.5px solid rgba(45,102,69,0.08)}
+.card-title{font-family:"Syne",sans-serif;font-weight:700;font-size:0.85rem;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sn{width:26px;height:26px;border-radius:50%;background:var(--g1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0}
+.fg{margin-bottom:12px}
+.fg:last-child{margin-bottom:0}
+.fg label{display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--sub);margin-bottom:4px}
+.fg input,.fg select,.fg textarea{width:100%;border:1.5px solid rgba(45,102,69,0.15);border-radius:10px;padding:10px 13px;font-size:0.87rem;font-family:inherit;background:var(--off);color:var(--ink);outline:none;transition:border-color 0.15s}
+.fg input:focus,.fg textarea:focus{border-color:var(--g2);background:#fff}
+.fg textarea{resize:vertical;min-height:80px;line-height:1.5}
+.fg.err input,.fg.err textarea{border-color:var(--err)}
+.em{font-size:0.68rem;color:var(--err);margin-top:3px;display:none}
+.fg.err .em{display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.cc{border:1.5px solid rgba(45,102,69,0.13);border-radius:9px;padding:9px 12px;cursor:pointer;font-size:0.78rem;font-weight:500;color:var(--sub);background:#fff;display:flex;align-items:center;gap:7px;transition:all 0.15s;text-align:left;width:100%}
+.cc:hover{border-color:var(--g2);color:var(--g2)}
+.cc.on{border-color:var(--g1);background:var(--g6);color:var(--g1);font-weight:600}
+.price-row{background:var(--off);border-radius:10px;padding:12px 14px;border:1.5px solid rgba(45,102,69,0.08);margin-bottom:10px}
+.pr-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pr-cat{font-size:0.78rem;font-weight:600;color:var(--g1)}
+.pr-rm{background:none;border:none;color:rgba(200,0,0,0.4);font-size:0.73rem;cursor:pointer;padding:2px 6px}
+.pr-rm:hover{color:var(--err)}
+.pr-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pr-2 input,.pr-desc input{width:100%;border:1.5px solid rgba(45,102,69,0.13);border-radius:8px;padding:8px 11px;font-size:0.82rem;font-family:inherit;background:#fff;outline:none;transition:border-color 0.15s}
+.pr-2 input:focus,.pr-desc input:focus{border-color:var(--g2)}
+.pr-fl{font-size:0.64rem;color:var(--sub);margin-bottom:3px;text-transform:uppercase;font-weight:700;letter-spacing:0.05em}
+.pr-desc{margin-top:8px}
+.no-cat{font-size:0.78rem;color:var(--sub);font-style:italic;padding:10px;text-align:center}
+.pnote{background:rgba(200,168,75,0.07);border:1px solid rgba(200,168,75,0.18);border-radius:9px;padding:11px 13px;font-size:0.75rem;color:var(--sub);line-height:1.6;margin-bottom:12px}
+.pnote strong{color:var(--gold)}
+.photo-drop{border:2px dashed rgba(45,102,69,0.2);border-radius:12px;padding:22px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--off);position:relative}
+.photo-drop:hover{border-color:var(--g2);background:var(--g6)}
+.photo-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pd-ic{font-size:1.8rem;margin-bottom:6px}
+.pd-t{font-size:0.82rem;font-weight:600;color:var(--g1);margin-bottom:2px}
+.pd-s{font-size:0.7rem;color:var(--sub)}
+.photo-prev{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pt{width:64px;height:64px;border-radius:8px;object-fit:cover;border:2px solid var(--g5)}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ec{border:1.5px solid rgba(45,102,69,0.13);border-radius:9px;padding:9px;cursor:pointer;font-size:0.77rem;font-weight:500;color:var(--sub);background:#fff;text-align:center;transition:all 0.15s}
+.ec:hover{border-color:var(--g2)}
+.ec.on{border-color:var(--g1);background:var(--g6);color:var(--g1);font-weight:600}
+.btn-sub{width:100%;background:var(--g1);color:#fff;border:none;border-radius:13px;padding:15px;font-family:"Syne",sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.2s;margin-bottom:10px}
+.btn-sub:hover{background:var(--g2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(45,102,69,0.28)}
+.btn-sub:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none}
+.sub-note{font-size:0.7rem;color:var(--sub);text-align:center;line-height:1.6}
+#ok-screen{display:none;padding:60px 6%;text-align:center;max-width:460px;margin:0 auto}
+.ok-ic{font-size:3.5rem;margin-bottom:18px}
+#ok-screen h2{font-family:"Syne",sans-serif;font-weight:800;font-size:1.8rem;color:var(--ink);margin-bottom:10px}
+#ok-screen p{color:var(--sub);font-size:0.88rem;line-height:1.7;margin-bottom:24px}
+.btn-home{display:inline-block;background:var(--g1);color:#fff;border-radius:50px;padding:12px 26px;font-weight:600;font-size:0.86rem;text-decoration:none}
+.spinner{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:520px){.row2,.type-grid,.cat-grid,.pr-2{grid-template-columns:1fr}.exp-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="https://getjust.fi" class="nav-logo">Just<span>.</span></a>
+  <div class="nav-right">
+    <div class="lang-sw">
+      <button class="lb on" onclick="setLang('fi',this)">🇫🇮 FI</button>
+      <button class="lb" onclick="setLang('en',this)">🇬🇧 EN</button>
+    </div>
+    <a href="https://getjust.fi" class="nav-back" data-t="nav-back">← Takaisin</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge" data-t="badge">Kumppaniohjelma</div>
+  <h1><span data-t="hero-h1a">Liity tekijäksi</span><br><em data-t="hero-h1b">Just.-verkostoon.</em></h1>
+  <p class="hero-sub" data-t="hero-sub">Saat näkyvyyden, varauskanavan ja arvosteluhistorian. Sinä teet työn – me hoidamme loput.</p>
+</div>
+
+<div class="wrap" id="form-wrap">
+
+  <div class="type-lbl" data-t="type-lbl">Olen</div>
+  <div class="type-grid">
+    <div class="tc on" id="tc-company" onclick="setType('company')">
+      <span class="tc-ic">🏢</span>
+      <div class="tc-chk">✓</div>
+      <div class="tc-t" data-t="tc-company-t">Yritys</div>
+      <div class="tc-s" data-t="tc-company-s">Rekisteröity yritys (Y-tunnus)</div>
+    </div>
+    <div class="tc" id="tc-private" onclick="setType('private')">
+      <span class="tc-ic">👤</span>
+      <div class="tc-chk">✓</div>
+      <div class="tc-t" data-t="tc-private-t">Yksityinen tekijä</div>
+      <div class="tc-s" data-t="tc-private-s">Itsenäinen ammatinharjoittaja</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="sn">1</span><span data-t="sec1">Yhteystiedot</span></div>
+    <div id="company-fields">
+      <div class="row2">
+        <div class="fg" id="fg-cn">
+          <label data-t="lbl-cn">Yrityksen nimi *</label>
+          <input type="text" id="company-name" data-ph="ph-cn" placeholder="GB Pro Oy">
+          <div class="em" data-t="err-req">Pakollinen kenttä</div>
+        </div>
+        <div class="fg" id="fg-yt">
+          <label data-t="lbl-yt">Y-tunnus *</label>
+          <input type="text" id="ytunnus" placeholder="1234567-8">
+          <div class="em" data-t="err-yt">Tarkista muoto</div>
+        </div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="fg" id="fg-name">
+        <label data-t="lbl-name">Yhteyshenkilön nimi *</label>
+        <input type="text" id="contact-name" data-ph="ph-name" placeholder="Matti Virtanen">
+        <div class="em" data-t="err-req">Pakollinen kenttä</div>
+      </div>
+      <div class="fg" id="fg-email">
+        <label data-t="lbl-email">Sähköposti *</label>
+        <input type="email" id="email" data-ph="ph-email" placeholder="matti@yritys.fi">
+        <div class="em" data-t="err-email">Tarkista osoite</div>
+      </div>
+    </div>
+    <div class="fg" id="fg-phone">
+      <label data-t="lbl-phone">Puhelin *</label>
+      <input type="tel" id="phone" placeholder="+358 40 123 4567">
+      <div class="em" data-t="err-req">Pakollinen kenttä</div>
+    </div>
+    <div id="private-note" style="display:none">
+      <div class="pnote"><strong data-t="pnote-title">Yksityiset tekijät:</strong> <span data-t="pnote-body">Käytä laskutuspalvelua (esim. Ukko.fi) laskuttaaksesi asiakkaita Just.-alustan kautta.</span></div>
+      <div class="fg">
+        <label data-t="lbl-msg">Viesti / Lisätiedot</label>
+        <textarea id="private-msg" data-ph="ph-msg" placeholder="Kerro itsestäsi..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="sn">2</span><span data-t="sec2">Palvelut ja omat hinnat</span></div>
+    <p style="font-size:0.76rem;color:var(--sub);margin-bottom:14px;line-height:1.6" data-t="sec2-sub">Valitse palvelusi ja lisää omat hintasi. Just. tuo sinulle näkyvyyden – sinä hinnoittelet itse.</p>
+    <div class="cat-grid" id="cat-grid">
+      <button class="cc" data-id="autopesu" data-fi="Autopesu" data-en="Car wash" onclick="toggleCat(this)">🚗 <span data-t="cat-autopesu">Autopesu</span></button>
+      <button class="cc" data-id="renkaanvaihto" data-fi="Renkaanvaihto" data-en="Tire change" onclick="toggleCat(this)">🔧 <span data-t="cat-renkaanvaihto">Renkaanvaihto</span></button>
+      <button class="cc" data-id="kodinsiivous" data-fi="Kodinsiivous" data-en="Home cleaning" onclick="toggleCat(this)">🏠 <span data-t="cat-kodinsiivous">Kodinsiivous</span></button>
+      <button class="cc" data-id="autohuolto" data-fi="Autohuolto" data-en="Car service" onclick="toggleCat(this)">🔨 <span data-t="cat-autohuolto">Autohuolto</span></button>
+      <button class="cc" data-id="putkityot" data-fi="Putkityöt" data-en="Plumbing" onclick="toggleCat(this)">🔩 <span data-t="cat-putkityot">Putkityöt</span></button>
+      <button class="cc" data-id="sahkotyot" data-fi="Sähkötyöt" data-en="Electrical" onclick="toggleCat(this)">⚡ <span data-t="cat-sahkotyot">Sähkötyöt</span></button>
+      <button class="cc" data-id="pintakasittely" data-fi="Pintakäsittely" data-en="Surface treatment" onclick="toggleCat(this)">✨ <span data-t="cat-pintakasittely">Pintakäsittely</span></button>
+      <button class="cc" data-id="pihatyot" data-fi="Pihatyöt" data-en="Yard work" onclick="toggleCat(this)">🌿 <span data-t="cat-pihatyot">Pihatyöt</span></button>
+      <button class="cc" data-id="lemmikkipalvelut" data-fi="Lemmikkipalvelut" data-en="Pet services" onclick="toggleCat(this)">🐾 <span data-t="cat-lemmikkipalvelut">Lemmikkipalvelut</span></button>
+      <button class="cc" data-id="muu" data-fi="Muu" data-en="Other" onclick="toggleCat(this)">➕ <span data-t="cat-muu">Muu, mikä?</span></button>
+    </div>
+    <div id="muu-custom" style="display:none;margin-bottom:12px">
+      <div class="fg" style="margin-bottom:0">
+        <label data-t="lbl-muu">Mikä palvelu?</label>
+        <input type="text" id="muu-text" data-ph="ph-muu" placeholder="Esim. Ikkunanpesu" oninput="updateMuu(this.value)">
+      </div>
+    </div>
+    <div id="price-rows"></div>
+    <div class="em" id="cat-err" style="margin-top:4px" data-t="err-cats">Valitse vähintään yksi palvelu</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="sn">3</span><span data-t="sec3">Kokemus alalta</span></div>
+    <div class="exp-grid">
+      <button class="ec" data-exp="alle1" onclick="setExp(this)"><span data-t="exp-1">Alle 1 v</span></button>
+      <button class="ec" data-exp="1-3" onclick="setExp(this)"><span data-t="exp-2">1–3 v</span></button>
+      <button class="ec on" data-exp="3-5" onclick="setExp(this)"><span data-t="exp-3">3–5 v</span></button>
+      <button class="ec" data-exp="5-10" onclick="setExp(this)"><span data-t="exp-4">5–10 v</span></button>
+      <button class="ec" data-exp="yli10" onclick="setExp(this)"><span data-t="exp-5">Yli 10 v</span></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="sn">4</span><span data-t="sec4">Tekijäkuva</span></div>
+    <p style="font-size:0.76rem;color:var(--sub);margin-bottom:12px;line-height:1.6" data-t="sec4-sub">Asiakkaat näkevät tekijän kuvan ennen varausta – kasvot rakentavat luottamusta.</p>
+    <div class="photo-drop" onclick="document.getElementById('photo-input').click()" style="cursor:pointer">
+      <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this)" style="display:none">
+      <div class="pd-ic">📸</div>
+      <div class="pd-t" id="pd-t" data-t="pd-t">Lataa kuva</div>
+      <div class="pd-s" data-t="pd-s">JPG tai PNG · Max 5MB</div>
+    </div>
+    <div class="photo-prev" id="photo-prev"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="sn">5</span><span data-t="sec5">Lyhyt esittely</span></div>
+    <div class="fg">
+      <label data-t="lbl-bio">Kerro itsestäsi ja palveluistasi</label>
+      <textarea id="bio" data-ph="ph-bio" placeholder="Esim. Olemme erikoistuneet autopesuun..."></textarea>
+    </div>
+    <div class="fg" style="margin-bottom:0">
+      <label data-t="lbl-bio-en">In English (optional)</label>
+      <textarea id="bio-en" data-ph="ph-bio-en" placeholder="E.g. We specialize in car washing in the Turku area..."></textarea>
+    </div>
+  </div>
+
+  <button class="btn-sub" id="submit-btn" onclick="submitForm()">
+    <span data-t="submit">Lähetä hakemus →</span>
+  </button>
+  <p class="sub-note" data-t="sub-note">Käsittelemme hakemuksen 1–3 arkipäivässä ja otamme yhteyttä sähköpostitse.</p>
+
+</div>
+
+<div id="ok-screen">
+  <div class="ok-ic">🎉</div>
+  <h2 data-t="ok-h2">Hakemus lähetetty!</h2>
+  <p><span data-t="ok-p">Kiitos! Käsittelemme hakemuksen 1–3 arkipäivässä ja otamme yhteyttä osoitteeseen</span> <strong id="ok-email"></strong>.</p>
+  <a href="https://getjust.fi" class="btn-home" data-t="ok-btn">Takaisin etusivulle</a>
+</div>
+
+<script>
+// ── TRANSLATIONS ─────────────────────────────────────────────────────
+const TRANS = {
+  fi: {
+    'page-title':'Liity tekijäksi – Just.',
+    'nav-back':'← Takaisin',
+    'badge':'Kumppaniohjelma',
+    'hero-h1a':'Liity tekijäksi',
+    'hero-h1b':'Just.-verkostoon.',
+    'hero-sub':'Saat näkyvyyden, varauskanavan ja arvosteluhistorian. Sinä teet työn – me hoidamme loput.',
+    'type-lbl':'Olen',
+    'tc-company-t':'Yritys','tc-company-s':'Rekisteröity yritys (Y-tunnus)',
+    'tc-private-t':'Yksityinen tekijä','tc-private-s':'Itsenäinen ammatinharjoittaja',
+    'sec1':'Yhteystiedot',
+    'lbl-cn':'Yrityksen nimi *','lbl-yt':'Y-tunnus *',
+    'lbl-name':'Yhteyshenkilön nimi *','lbl-email':'Sähköposti *','lbl-phone':'Puhelin *',
+    'lbl-msg':'Viesti / Lisätiedot','lbl-muu':'Mikä palvelu?','lbl-bio':'Kerro itsestäsi ja palveluistasi',
+    'ph-cn':'GB Pro Oy','ph-name':'Matti Virtanen','ph-email':'matti@yritys.fi',
+    'ph-msg':'Kerro itsestäsi...','ph-muu':'Esim. Ikkunanpesu','ph-bio':'Esim. Olemme erikoistuneet autopesuun Turun alueella...',
+    'err-req':'Pakollinen kenttä','err-yt':'Tarkista muoto (1234567-8)','err-email':'Tarkista sähköpostiosoite',
+    'err-cats':'Valitse vähintään yksi palvelu',
+    'pnote-title':'Yksityiset tekijät:',
+    'pnote-body':'Käytä laskutuspalvelua (esim. Ukko.fi) laskuttaaksesi asiakkaita Just.-alustan kautta.',
+    'sec2':'Palvelut ja omat hinnat',
+    'sec2-sub':'Valitse palvelusi ja lisää omat hintasi. Just. tuo sinulle näkyvyyden – sinä hinnoittelet itse.',
+    'cat-autopesu':'Autopesu','cat-renkaanvaihto':'Renkaanvaihto','cat-kodinsiivous':'Kodinsiivous',
+    'cat-autohuolto':'Autohuolto','cat-putkityot':'Putkityöt','cat-sahkotyot':'Sähkötyöt',
+    'cat-pintakasittely':'Pintakäsittely','cat-pihatyot':'Pihatyöt','cat-lemmikkipalvelut':'Lemmikkipalvelut','cat-muu':'Muu, mikä?',
+    'sec3':'Kokemus alalta',
+    'exp-1':'Alle 1 v','exp-2':'1–3 v','exp-3':'3–5 v','exp-4':'5–10 v','exp-5':'Yli 10 v',
+    'sec4':'Tekijäkuva',
+    'sec4-sub':'Asiakkaat näkevät tekijän kuvan ennen varausta – kasvot rakentavat luottamusta.',
+    'pd-t':'Lataa kuva','pd-s':'JPG tai PNG · Max 5MB',
+    'sec5':'Lyhyt esittely',
+    'submit':'Lähetä hakemus →','sending':'Lähetetään...',
+    'sub-note':'Käsittelemme hakemuksen 1–3 arkipäivässä ja otamme yhteyttä sähköpostitse.',
+    'ok-h2':'Hakemus lähetetty!',
+    'ok-p':'Kiitos! Käsittelemme hakemuksen 1–3 arkipäivässä ja otamme yhteyttä osoitteeseen',
+    'ok-btn':'Takaisin etusivulle',
+    // Price row labels
+    'pr-price':'Hinta (€)','pr-unit':'Yksikkö','pr-desc':'Palvelukuvaus',
+    'pr-ph-price':'esim. 50','pr-ph-unit':'esim. /auto','pr-ph-desc':'esim. ulkopesu, sisäpuhdistus...',
+    'pr-remove':'Poista','no-cat':'Valitse ensin palvelukategoria yllä',
+  },
+  en: {
+    'page-title':'Join as provider – Just.',
+    'nav-back':'← Back',
+    'badge':'Partner program',
+    'hero-h1a':'Join as a provider',
+    'hero-h1b':'to the Just. network.',
+    'hero-sub':'Get visibility, a booking channel and review history. You do the work – we handle the rest.',
+    'type-lbl':'I am',
+    'tc-company-t':'Company','tc-company-s':'Registered company (Business ID)',
+    'tc-private-t':'Private provider','tc-private-s':'Independent professional',
+    'sec1':'Contact details',
+    'lbl-cn':'Company name *','lbl-yt':'Business ID *',
+    'lbl-name':'Contact name *','lbl-email':'Email *','lbl-phone':'Phone *',
+    'lbl-msg':'Message / Additional info','lbl-muu':'What service?','lbl-bio':'Tell about yourself and your services',
+    'ph-cn':'GB Pro Ltd','ph-name':'John Smith','ph-email':'john@company.com',
+    'ph-msg':'Tell about yourself...','ph-muu':'E.g. Window cleaning','ph-bio':'E.g. We specialize in car washing in the Turku area...',
+    'err-req':'Required field','err-yt':'Check format (1234567-8)','err-email':'Check email address',
+    'err-cats':'Select at least one service',
+    'pnote-title':'Private providers:',
+    'pnote-body':'Use an invoicing service (e.g. Ukko.fi) to invoice customers through the Just. platform.',
+    'sec2':'Services and your pricing',
+    'sec2-sub':'Select your services and add your own prices. Just. brings you visibility – you set the prices.',
+    'cat-autopesu':'Car wash','cat-renkaanvaihto':'Tire change','cat-kodinsiivous':'Home cleaning',
+    'cat-autohuolto':'Car service','cat-putkityot':'Plumbing','cat-sahkotyot':'Electrical',
+    'cat-pintakasittely':'Surface treatment','cat-pihatyot':'Yard work','cat-lemmikkipalvelut':'Pet services','cat-muu':'Other, what?',
+    'sec3':'Experience',
+    'exp-1':'Under 1 yr','exp-2':'1–3 yrs','exp-3':'3–5 yrs','exp-4':'5–10 yrs','exp-5':'10+ yrs',
+    'sec4':'Profile photo',
+    'sec4-sub':'Customers see the provider\'s photo before booking – a real face builds trust.',
+    'pd-t':'Upload photo','pd-s':'JPG or PNG · Max 5MB',
+    'sec5':'Short introduction',
+    'submit':'Submit application →','sending':'Sending...',
+    'sub-note':'We process applications within 1–3 business days and contact you by email.',
+    'ok-h2':'Application sent!',
+    'ok-p':'Thank you! We will process your application within 1–3 business days and contact you at',
+    'ok-btn':'Back to home',
+    'pr-price':'Price (€)','pr-unit':'Unit','pr-desc':'Service description',
+    'pr-ph-price':'e.g. 50','pr-ph-unit':'e.g. /car','pr-ph-desc':'e.g. exterior wash, interior...',
+    'pr-remove':'Remove','no-cat':'Select a service category above first',
+  }
+};
+
+// ── STATE ────────────────────────────────────────────────────────────
+const SUPA_URL='https://mebuynheutnegvvofnrl.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYnV5bmhldXRuZWd2dm9mbnJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDA3OTEsImV4cCI6MjA5MjQxNjc5MX0.IguEIQsVF1ZsTC9sjn0dZU3_Z0-o5UqJuBv7KKCwwAE';
+let _lang='fi';
+let currentType='company';
+let selectedCats={};
+let selectedExp='3-5';
+let photoFiles=[];
+
+// ── LANGUAGE ─────────────────────────────────────────────────────────
+function setLang(lang,btn){
+  _lang=lang;
+  document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const T=TRANS[lang];
+  // Apply all data-t elements
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    if(T[k]!==undefined) el.innerHTML=T[k];
+  });
+  // Apply placeholders
+  document.querySelectorAll('[data-ph]').forEach(el=>{
+    const k=el.getAttribute('data-ph');
+    if(T[k]) el.placeholder=T[k];
+  });
+  // Update page title
+  document.title=T['page-title']||document.title;
+  // Re-render price rows in new language
+  renderPriceRows();
+  // Update cat chip labels (data-en/data-fi on buttons)
+  document.querySelectorAll('.cc[data-id]').forEach(btn=>{
+    const span=btn.querySelector('[data-t]');
+    if(span){
+      const k=span.getAttribute('data-t');
+      if(T[k]) span.textContent=T[k];
+    }
+  });
+}
+
+// ── TYPE ─────────────────────────────────────────────────────────────
+function setType(type){
+  currentType=type;
+  document.getElementById('tc-company').classList.toggle('on',type==='company');
+  document.getElementById('tc-private').classList.toggle('on',type==='private');
+  document.getElementById('company-fields').style.display=type==='company'?'':'none';
+  document.getElementById('private-note').style.display=type==='private'?'':'none';
+}
+
+// ── CATEGORIES ───────────────────────────────────────────────────────
+function toggleCat(el){
+  const id=el.dataset.id;
+  el.classList.toggle('on');
+  const on=el.classList.contains('on');
+  if(id==='muu'){
+    document.getElementById('muu-custom').style.display=on?'block':'none';
+    if(on) selectedCats['muu']={fi:'Muu',en:'Other',rows:[{price:'',unit:'',desc:''}]};
+    else delete selectedCats['muu'];
+  } else {
+    if(on) selectedCats[id]={fi:el.dataset.fi,en:el.dataset.en,rows:[{price:'',unit:'',desc:''}]};
+    else delete selectedCats[id];
+  }
+  renderPriceRows();
+}
+
+function updateMuu(val){
+  if(selectedCats['muu']){selectedCats['muu'].fi=val;selectedCats['muu'].en=val;}
+  renderPriceRows();
+}
+
+function renderPriceRows(){
+  const c=document.getElementById('price-rows');
+  const T=TRANS[_lang];
+  const keys=Object.keys(selectedCats);
+  if(!keys.length){c.innerHTML=`<p class="no-cat">${T['no-cat']}</p>`;return;}
+  c.innerHTML='';
+  keys.forEach(id=>{
+    const cat=selectedCats[id];
+    const lbl=_lang==='fi'?cat.fi:cat.en;
+    const row=document.createElement('div');
+    row.className='price-row';
+    const rowsHtml=cat.rows.map((r,i)=>`
+      <div class="pr-2" style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,0.06)">
+        <div><div class="pr-fl">${T['pr-price']}</div><input type="text" value="${r.price}" placeholder="${T['pr-ph-price']}" oninput="selectedCats['${id}'].rows[${i}].price=this.value"></div>
+        <div><div class="pr-fl">${T['pr-unit']}</div><input type="text" value="${r.unit}" placeholder="${T['pr-ph-unit']}" oninput="selectedCats['${id}'].rows[${i}].unit=this.value"></div>
+      </div>
+      <div class="pr-desc" style="margin-bottom:8px"><div class="pr-fl">${T['pr-desc']}</div><input type="text" value="${r.desc}" placeholder="${T['pr-ph-desc']}" oninput="selectedCats['${id}'].rows[${i}].desc=this.value"></div>
+    `).join('');
+    row.innerHTML=`
+      <div class="pr-head">
+        <span class="pr-cat">${lbl}</span>
+        <button class="pr-rm" onclick="removeCat('${id}')">✕ ${T['pr-remove']}</button>
+      </div>
+      ${rowsHtml}
+      <button onclick="addPriceRow('${id}')" style="font-size:0.8rem;color:var(--g2);background:none;border:1.5px dashed var(--g4);border-radius:8px;padding:6px 12px;cursor:pointer;width:100%;margin-top:4px">+ Lisää hintarivi</button>`;
+    c.appendChild(row);
+  });
+}
+
+function addPriceRow(id){
+  selectedCats[id].rows.push({price:'',unit:'',desc:''});
+  renderPriceRows();
+}
+
+function removeCat(id){
+  delete selectedCats[id];
+  const btn=document.querySelector(`#cat-grid [data-id="${id}"]`);
+  if(btn) btn.classList.remove('on');
+  if(id==='muu') document.getElementById('muu-custom').style.display='none';
+  renderPriceRows();
+}
+
+// ── EXPERIENCE ───────────────────────────────────────────────────────
+function setExp(el){
+  document.querySelectorAll('.ec').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  selectedExp=el.dataset.exp;
+}
+
+// ── PHOTO ─────────────────────────────────────────────────────────────
+function handlePhoto(input){
+  photoFiles=Array.from(input.files);
+  const prev=document.getElementById('photo-prev');
+  prev.innerHTML='';
+  photoFiles.forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{const img=document.createElement('img');img.src=e.target.result;img.className='pt';prev.appendChild(img);};
+    r.readAsDataURL(f);
+  });
+  const n=photoFiles.length;
+  document.getElementById('pd-t').textContent=_lang==='en'?`${n} photo(s) selected ✓`:`${n} kuva valittu ✓`;
+}
+
+// ── VALIDATE ──────────────────────────────────────────────────────────
+function validate(){
+  let ok=true;
+  const req=(id,fail)=>{const fg=document.getElementById('fg-'+id);if(fg){fg.classList.toggle('err',fail);if(fail)ok=false;}};
+  if(currentType==='company'){
+    req('cn',!document.getElementById('company-name').value.trim());
+    req('yt',!/^\d{7}-\d$/.test(document.getElementById('ytunnus').value.trim()));
+  }
+  req('name',!document.getElementById('contact-name').value.trim());
+  req('email',!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim()));
+  req('phone',!document.getElementById('phone').value.trim());
+  const ce=document.getElementById('cat-err');
+  if(!Object.keys(selectedCats).length){ce.style.display='block';ok=false;}else ce.style.display='none';
+  return ok;
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────
+async function submitForm(){
+  if(!validate())return;
+  const T=TRANS[_lang];
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;
+  btn.querySelector('[data-t="submit"]').textContent=T['sending'];
+  const email=document.getElementById('email').value.trim();
+  const pricing=JSON.stringify(Object.entries(selectedCats).map(([id,c])=>({id,fi:c.fi,en:c.en,rows:c.rows})));
+  const data={
+    company_name:currentType==='company'?document.getElementById('company-name').value.trim():null,
+    contact_name:document.getElementById('contact-name').value.trim(),
+    email,phone:document.getElementById('phone').value.trim(),
+    service_category:Object.values(selectedCats).map(c=>c.fi).join(', '),
+    bio:(document.getElementById('bio').value.trim()||document.getElementById('private-msg')?.value.trim()||'')+'\n\nHINNASTO:'+pricing,
+    bio_en:document.getElementById('bio-en').value.trim()||null,
+    active:true,rating:0,job_count:0,city:'Turku'
+  };
+  try{
+    // Tallenna kuva base64-muodossa
+    if(photoFiles.length>0){
+      const file=photoFiles[0];
+      await new Promise((resolve)=>{
+        const r=new FileReader();
+        r.onload=e=>{data.avatar_url=e.target.result;resolve();};
+        r.readAsDataURL(file);
+      });
+    }
+    const res=await fetch(`${SUPA_URL}/rest/v1/partners`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},body:JSON.stringify(data)});
+    if(res.ok||res.status===201){
+      fetch('/.netlify/functions/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact_name:data.contact_name,company_name:data.company_name,email:data.email,phone:data.phone,service_categories:data.service_category,experience:'',type:currentType})}).catch(()=>{});
+      document.getElementById('form-wrap').style.display='none';
+      document.getElementById('ok-screen').style.display='block';
+      document.getElementById('ok-email').textContent=email;
+    }else throw new Error(res.status);
+  }catch(e){
+    btn.disabled=false;
+    btn.querySelector('[data-t="submit"]').textContent=T['submit'];
+    alert('Virhe – ota yhteyttä info.getjust@gmail.com');
+  }
+}
+
+// Init
+setType('company');
+renderPriceRows();
+</script>
+</body>
+</html>

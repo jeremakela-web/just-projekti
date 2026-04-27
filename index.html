@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Just. – Laadunvarmistetut tekijät lähellä sinua.">
+<title>Just.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a1a0e;
+  --g1: #2d6645;
+  --g2: #3d8a5c;
+  --g4: #7ecf96;
+  --g5: #b8eacc;
+  --g6: #e4f7ec;
+  --off: #f6fcf8;
+  --sub: #4a6852;
+  --gold: #c8a84b;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: "Instrument Sans", sans-serif; background: var(--off); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 7%; height: 60px; display: flex; align-items: center; justify-content: space-between; background: rgba(246,252,248,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(45,102,69,0.07); }
+.logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--ink); letter-spacing: -0.03em; }
+.logo span { color: var(--g1); }
+.nav-lang { display: flex; gap: 2px; background: rgba(45,102,69,0.07); border-radius: 20px; padding: 3px; }
+.lb { background: none; border: none; color: var(--sub); padding: 4px 12px; border-radius: 16px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.18s; }
+.lb.on { background: var(--g1); color: #fff; }
+
+#hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 7% 60px; position: relative; }
+.hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 80% 30%, rgba(126,207,150,0.12) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 10% 80%, rgba(45,102,69,0.06) 0%, transparent 55%); pointer-events: none; }
+.hero-bg::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(45,102,69,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(45,102,69,0.03) 1px, transparent 1px); background-size: 80px 80px; }
+
+/* Animated arc */
+.hero-arc {
+  position: absolute;
+  bottom: -2px;
+  left: 0; right: 0;
+  height: 180px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-arc svg {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  opacity: 0;
+  animation: orbFloat 12s ease-in-out infinite;
+}
+.orb-1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(82,170,114,0.18) 0%, transparent 70%);
+  top: 5%; right: -80px;
+  animation-delay: 0s;
+  animation-duration: 14s;
+}
+.orb-2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(45,102,69,0.12) 0%, transparent 70%);
+  bottom: 20%; left: -60px;
+  animation-delay: -5s;
+  animation-duration: 18s;
+}
+.orb-3 {
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(200,168,75,0.08) 0%, transparent 70%);
+  top: 40%; left: 40%;
+  animation-delay: -8s;
+  animation-duration: 22s;
+}
+@keyframes orbFloat {
+  0%   { opacity: 0; transform: translateY(0px) scale(1); }
+  10%  { opacity: 1; }
+  50%  { transform: translateY(-30px) scale(1.08); }
+  90%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(0px) scale(1); }
+}
+
+/* Arc fade bottom of hero */
+@keyframes arcWave {
+  0%,100% { transform: translateX(0); }
+  50%     { transform: translateX(-20px); }
+}
+.hero-inner { position: relative; z-index: 2; max-width: 820px; width: 100%; }
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(45,102,69,0.07); border: 1px solid rgba(45,102,69,0.15); color: var(--g1); padding: 5px 14px; border-radius: 50px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 36px; animation: fadeUp 0.6s ease both; }
+.hero-badge::before { content: "●"; font-size: 0.4rem; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+.tagline-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; animation: fadeUp 0.65s ease 0.05s both; }
+.ttab { background: none; border: 1.5px solid rgba(45,102,69,0.18); color: var(--sub); padding: 5px 15px; border-radius: 50px; font-size: 0.7rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.ttab.on { background: var(--g1); border-color: var(--g1); color: #fff; }
+.ttab:hover:not(.on) { border-color: var(--g2); color: var(--g2); }
+.tagline-display { min-height: 200px; animation: fadeUp 0.7s ease 0.1s both; }
+.tagline-item { display: none; }
+.tagline-item.on { display: block; animation: fadeUp 0.35s ease both; }
+h1 { font-family: "Syne", sans-serif; font-size: clamp(2.8rem, 5.5vw, 4.4rem); font-weight: 800; line-height: 1.04; letter-spacing: -0.045em; color: var(--ink); margin-bottom: 22px; }
+h1 em { font-style: italic; color: var(--g1); }
+.tagline-sub { font-size: 1rem; color: var(--sub); line-height: 1.7; font-weight: 300; max-width: 480px; margin-bottom: 36px; }
+.cta-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; animation: fadeUp 0.7s ease 0.2s both; }
+.btn-main { display: inline-flex; align-items: center; gap: 8px; background: var(--g1); color: #fff; border: none; padding: 15px 32px; border-radius: 50px; font-family: inherit; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+.btn-main:hover { background: var(--g2); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(45,102,69,0.28); }
+.btn-main .arrow { transition: transform 0.2s; }
+.btn-main:hover .arrow { transform: translateX(4px); }
+.btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: none; color: var(--sub); border: 1.5px solid rgba(45,102,69,0.18); padding: 14px 26px; border-radius: 50px; font-family: inherit; font-weight: 500; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+.btn-ghost:hover { border-color: var(--g2); color: var(--g2); }
+.stats-strip { margin-top: 68px; padding-top: 32px; border-top: 1px solid rgba(45,102,69,0.1); display: flex; gap: 44px; flex-wrap: wrap; animation: fadeUp 0.7s ease 0.3s both; }
+.stat-n { font-family: "Syne", sans-serif; font-size: 1.85rem; font-weight: 800; color: var(--g1); line-height: 1; letter-spacing: -0.04em; }
+.stat-l { font-size: 0.73rem; color: var(--sub); margin-top: 3px; font-weight: 300; }
+
+#services { padding: 100px 7%; background: #fff; }
+.sec-inner { max-width: 1080px; margin: 0 auto; }
+.sec-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--g2); margin-bottom: 10px; }
+h2 { font-family: "Syne", sans-serif; font-size: clamp(1.7rem, 2.8vw, 2.4rem); font-weight: 800; letter-spacing: -0.035em; margin-bottom: 8px; }
+.sec-desc { color: var(--sub); font-size: 0.9rem; line-height: 1.7; max-width: 460px; margin-bottom: 48px; font-weight: 300; }
+.services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.svc { border: 1.5px solid rgba(45,102,69,0.1); border-radius: 14px; padding: 22px 20px; transition: all 0.22s; cursor: pointer; background: var(--off); text-decoration: none; display: block; }
+.svc:hover { border-color: rgba(45,102,69,0.28); background: var(--g6); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(45,102,69,0.1); }
+.svc-ic { font-size: 1.7rem; margin-bottom: 10px; display: block; }
+.svc-name { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--ink); margin-bottom: 3px; }
+.svc-price { font-size: 0.74rem; color: var(--g2); font-weight: 600; }
+.svc-tag { display: inline-block; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; border-radius: 8px; margin-top: 6px; }
+.tag-live { background: rgba(45,102,69,0.1); color: var(--g1); }
+.tag-soon { background: rgba(200,168,75,0.1); color: var(--gold); }
+
+#how { padding: 100px 7%; background: var(--off); }
+.steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; margin-top: 48px; }
+.step-card { background: #fff; border-radius: 14px; padding: 24px 20px; border: 1.5px solid rgba(45,102,69,0.08); transition: all 0.2s; }
+.step-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(45,102,69,0.1); border-color: rgba(45,102,69,0.2); }
+.step-num { width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--g4); display: flex; align-items: center; justify-content: center; font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 14px; }
+.step-title { font-family: "Syne", sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; }
+.step-desc { font-size: 0.78rem; color: var(--sub); line-height: 1.65; font-weight: 300; }
+
+#join { padding: 100px 7%; background: var(--ink); text-align: center; }
+.join-inner { max-width: 580px; margin: 0 auto; }
+.join-title { font-family: "Syne", sans-serif; font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 800; color: #fff; letter-spacing: -0.04em; margin-bottom: 16px; }
+.join-title em { color: var(--g4); font-style: italic; }
+.join-desc { color: rgba(184,234,204,0.45); font-size: 0.9rem; line-height: 1.7; margin-bottom: 40px; font-weight: 300; }
+.join-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-jp { background: var(--g1); color: #fff; border: none; padding: 14px 30px; border-radius: 50px; font-family: inherit; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+.btn-jp:hover { background: var(--g2); }
+.btn-jo { background: transparent; color: var(--g5); border: 1.5px solid rgba(184,234,204,0.18); padding: 14px 28px; border-radius: 50px; font-family: inherit; font-weight: 400; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+.btn-jo:hover { border-color: var(--g4); color: var(--g4); }
+
+footer { background: #060f09; padding: 48px 7% 28px; }
+.footer-inner { max-width: 1080px; margin: 0 auto; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 36px; }
+.flogo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 1.2rem; color: #fff; margin-bottom: 10px; }
+.flogo span { color: var(--g4); }
+.fdesc { font-size: 0.75rem; color: rgba(255,255,255,0.22); line-height: 1.7; font-weight: 300; }
+.fh { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.18); margin-bottom: 14px; }
+.flinks { list-style: none; }
+.flinks li { margin-bottom: 8px; }
+.flinks a { color: rgba(255,255,255,0.35); font-size: 0.77rem; text-decoration: none; transition: color 0.2s; font-weight: 300; }
+.flinks a:hover { color: var(--g4); }
+.fbot { padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.fcopy { font-size: 0.67rem; color: rgba(255,255,255,0.14); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)} }
+
+/* Language control via body class */
+body.lang-fi .en-l { display: none !important; }
+body.lang-fi .fi-l { display: revert !important; }
+body.lang-en .fi-l { display: none !important; }
+body.lang-en .en-l { display: revert !important; }
+.fi { opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease; }
+.fi.vis { opacity:1;transform:translateY(0); }
+
+@media(max-width:900px){.services-grid{grid-template-columns:repeat(2,1fr)}.steps-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.services-grid,.steps-grid,.footer-grid{grid-template-columns:1fr}.stats-strip{gap:28px}.cta-row{flex-direction:column;align-items:flex-start}}
+.en-l{display:none}
+</style>
+</head>
+<body class="lang-fi">
+
+<nav>
+  <div class="logo">Just<span>.</span></div>
+  <div class="nav-lang">
+    <button class="lb on" onclick="setLang('fi',this)">🇫🇮</button>
+    <button class="lb" onclick="setLang('en',this)">🇬🇧</button>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-inner">
+
+    <div class="hero-badge fi-l">Laadunvarmistettu palvelu</div>
+    <div class="hero-badge en-l">Quality-verified service</div>
+
+    <!-- Tagline tabs -->
+
+
+    <div style="animation: fadeUp 0.7s ease 0.1s both;">
+      <h1 class="fi-l">Valitse parhaat tekijät –<br><em>vaikuta itse!</em></h1>
+      <h1 class="en-l">Best in the field –<br><em>by your choice.</em></h1>
+      <p class="tagline-sub fi-l">Näet tekijän kasvot, pisteet ja oikeat arvostelut ennen varausta.<br>Sinä päätät. Ei arvailua.</p>
+      <p class="tagline-sub en-l">See the provider's face, rating and real reviews before booking.<br>You decide. No guessing.</p>
+    </div>
+
+    <div class="cta-row">
+      <a href="https://justapp.fi" class="btn-main fi-l">Varaa palvelu <span class="arrow">→</span></a>
+      <a href="https://justapp.fi" class="btn-main en-l">Book a service <span class="arrow">→</span></a>
+      <a href="liity-tekijaksi.html" class="btn-ghost fi-l">Liity tekijäksi</a>
+      <a href="liity-tekijaksi.html" class="btn-ghost en-l">Become a provider</a>
+    </div>
+
+    <div class="stats-strip">
+      <div class="stat"><div class="stat-n">8+</div><div class="stat-l fi-l">Palvelukategoriaa</div><div class="stat-l en-l">Service categories</div></div>
+      <div class="stat"><div class="stat-n">4.9 ★</div><div class="stat-l fi-l">Tekijäarvosana</div><div class="stat-l en-l">Provider rating</div></div>
+      <div class="stat"><div class="stat-n">0 €</div><div class="stat-l fi-l">Liittymismaksu</div><div class="stat-l en-l">Joining fee</div></div>
+      <div class="stat"><div class="stat-n">24h</div><div class="stat-l fi-l">Ilmainen peruutus</div><div class="stat-l en-l">Free cancellation</div></div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<!-- STEPS -->
+<section id="how" style="padding: 80px 7%; background: var(--off);">
+  <div class="sec-inner">
+    <div class="sec-label fi-l" style="font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--g2);margin-bottom:10px;">Miten toimii</div>
+    <div class="sec-label en-l">How it works</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.7rem,2.8vw,2.4rem);font-weight:800;letter-spacing:-0.035em;margin-bottom:48px;" class="fi fi-l">Neljä askelta.<br>Ei muuta.</h2>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.7rem,2.8vw,2.4rem);font-weight:800;letter-spacing:-0.035em;margin-bottom:48px;" class="fi en-l">Four steps.<br>Nothing more.</h2>
+    <div class="steps-grid">
+      <div class="step-card fi">
+        <div class="step-num">1</div>
+        <div class="step-title fi-l">Valitse palvelu</div>
+        <div class="step-title en-l">Choose service</div>
+        <div class="step-desc fi-l">Selaa kategorioita ja valitse mitä tarvitset. Hinnat näkyvät selkeästi.</div>
+        <div class="step-desc en-l">Browse categories and pick what you need. Prices shown clearly.</div>
+      </div>
+      <div class="step-card fi">
+        <div class="step-num">2</div>
+        <div class="step-title fi-l">Valitse tekijä</div>
+        <div class="step-title en-l">Choose provider</div>
+        <div class="step-desc fi-l">Näet kuvan, pisteet ja arvostelut etukäteen. Just. suosittelee parhaan.</div>
+        <div class="step-desc en-l">See photo, rating and reviews in advance. Just. recommends the best.</div>
+      </div>
+      <div class="step-card fi">
+        <div class="step-num">3</div>
+        <div class="step-title fi-l">Varaa aika</div>
+        <div class="step-title en-l">Book a time</div>
+        <div class="step-desc fi-l">Kalenteri näyttää vapaat ajat. Maksu suoraan tekijälle työn jälkeen.</div>
+        <div class="step-desc en-l">Calendar shows availability. Pay the provider directly after the job.</div>
+      </div>
+      <div class="step-card fi">
+        <div class="step-num">4</div>
+        <div class="step-title fi-l">Arvioi työ</div>
+        <div class="step-title en-l">Rate the job</div>
+        <div class="step-desc fi-l">Saat SMS-linkin heti työn jälkeen. Tähtesi auttavat seuraavaa asiakasta.</div>
+        <div class="step-desc en-l">You get an SMS link right after. Your stars help the next customer.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOIN -->
+<section id="join">
+  <div class="join-inner">
+    <h2 class="join-title fi fi-l">Yksi nappi.<br><em>Oikea tekijä.</em></h2>
+    <h2 class="join-title fi en-l">One tap.<br><em>The right professional.</em></h2>
+    <p class="join-desc fi fi-l">Katso tekijät, lue arvostelut ja varaa aika.<br>Kaikki yhdessä paikassa – justapp.fi</p>
+    <p class="join-desc fi en-l">See providers, read reviews and book a time.<br>All in one place – justapp.fi</p>
+    <div class="join-btns fi">
+      <a href="https://justapp.fi" class="btn-jp fi-l">Varaa nyt →</a>
+      <a href="https://justapp.fi" class="btn-jp en-l">Book now →</a>
+      <a href="liity-tekijaksi.html" class="btn-jo fi-l">Liity tekijäksi</a>
+      <a href="liity-tekijaksi.html" class="btn-jo en-l">Become a provider</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div><div class="flogo">Just<span>.</span></div><p class="fdesc fi-l">Laadunvarmistetut tekijät – kaikki palvelut yhdessä paikassa.</p><p class="fdesc en-l">Verified professionals – all services in one place.</p></div>
+      <div><div class="fh fi-l">Palvelut</div><div class="fh en-l">Services</div><ul class="flinks"><li><a href="https://justapp.fi" class="fi-l">Autopesu</a><a href="https://justapp.fi" class="en-l">Car wash</a></li><li><a href="https://justapp.fi" class="fi-l">Renkaanvaihto</a><a href="https://justapp.fi" class="en-l">Tire change</a></li><li><a href="https://justapp.fi" class="fi-l">Kaikki palvelut</a><a href="https://justapp.fi" class="en-l">All services</a></li></ul></div>
+      <div><div class="fh fi-l">Yritys</div><div class="fh en-l">Company</div><ul class="flinks"><li><a href="mailto:info.getjust@gmail.com" class="fi-l">Yhteystiedot</a><a href="mailto:info.getjust@gmail.com" class="en-l">Contact</a></li><li><a href="liity-tekijaksi.html" class="fi-l">Liity tekijäksi</a><a href="liity-tekijaksi.html" class="en-l">Become a provider</a></li></ul></div>
+      <div><div class="fh">Some</div><ul class="flinks"><li><a href="https://instagram.com/getjust.fi">Instagram</a></li><li><a href="https://tiktok.com/@just31920">TikTok</a></li><li><a href="https://facebook.com/getjust.fi">Facebook</a></li></ul></div>
+    </div>
+    <div class="fbot"><div class="fcopy">© 2025 Just. · Kansallisvaranto Oy · Y-tunnus: 2656481-6</div><div class="fcopy">getjust.fi · justapp.fi · info.getjust@gmail.com</div></div>
+  </div>
+</footer>
+
+<script>
+function setLang(lang, btn) {
+  document.querySelectorAll('.lb').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.body.classList.remove('lang-fi', 'lang-en');
+  document.body.classList.add('lang-' + lang);
+  localStorage.setItem('just-lang', lang);
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('just-lang') || 'fi';
+  document.body.classList.add('lang-' + saved);
+  if (saved === 'en') {
+    const btn = document.querySelector('.nav-lang .lb:last-child');
+    if (btn) btn.classList.add('on');
+    const fiFlagBtn = document.querySelector('.nav-lang .lb:first-child');
+    if (fiFlagBtn) fiFlagBtn.classList.remove('on');
+  }
+});
+function setTagline(idx, btn) {
+  document.querySelectorAll('.ttab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.tagline-item').forEach(el => el.classList.remove('on'));
+  document.getElementById('tl-' + idx).classList.add('on');
+}
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fi').forEach(el => obs.observe(el));
+</script>
+<!-- CHAT WIDGET -->
+<style>
+#chat-btn{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:var(--g1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 24px rgba(45,102,69,0.45);z-index:300;transition:all 0.2s}
+#chat-btn:hover{background:var(--g2);transform:scale(1.08)}
+#chat-pulse{position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;background:#f59e0b;border:2px solid #fff;animation:cpulse 2s ease-in-out infinite}
+@keyframes cpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+#chat-win{position:fixed;bottom:96px;right:24px;width:320px;max-height:480px;background:#fff;border-radius:18px;box-shadow:0 12px 48px rgba(0,0,0,0.18);z-index:300;display:none;flex-direction:column;overflow:hidden;border:1px solid rgba(45,102,69,0.12)}
+#chat-win.open{display:flex}
+#chat-head{background:var(--g1);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+#chat-head-l{display:flex;align-items:center;gap:10px}
+#chat-head-ic{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+#chat-head-t{color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem}
+#chat-head-s{color:rgba(255,255,255,0.65);font-size:0.68rem;margin-top:1px}
+#chat-close{background:none;border:none;color:rgba(255,255,255,0.7);font-size:1.1rem;cursor:pointer;padding:4px}
+#chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f8fdf9}
+.cmsg{max-width:85%;padding:10px 13px;border-radius:14px;font-size:0.83rem;line-height:1.5}
+.cmsg.bot{background:#fff;border:1px solid rgba(45,102,69,0.1);color:#0a1a10;align-self:flex-start;border-radius:4px 14px 14px 14px}
+.cmsg.user{background:var(--g1);color:#fff;align-self:flex-end;border-radius:14px 14px 4px 14px}
+.cmsg.typing{background:#fff;border:1px solid rgba(45,102,69,0.1);color:var(--g2);align-self:flex-start;font-style:italic;font-size:0.78rem}
+#chat-sugs{padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;background:#fff;border-top:1px solid rgba(45,102,69,0.07)}
+.csug{background:var(--g6,#e4f7ec);color:var(--g1);border:none;border-radius:50px;padding:5px 12px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s}
+.csug:hover{background:var(--g5,#b8eacc)}
+#chat-input-row{display:flex;gap:8px;padding:10px 12px;background:#fff;border-top:1px solid rgba(45,102,69,0.07)}
+#chat-input{flex:1;border:1.5px solid rgba(45,102,69,0.15);border-radius:50px;padding:8px 14px;font-size:0.82rem;font-family:inherit;outline:none;background:#f8fdf9}
+#chat-input:focus{border-color:var(--g2)}
+#chat-send{background:var(--g1);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+#chat-send:hover{background:var(--g2)}
+</style>
+
+<button id="chat-btn" onclick="toggleChat()">
+  💬
+  <div id="chat-pulse"></div>
+</button>
+
+<div id="chat-win">
+  <div id="chat-head">
+    <div id="chat-head-l">
+      <div id="chat-head-ic">🤖</div>
+      <div>
+        <div id="chat-head-t">Just. Asiakaspalvelu</div>
+        <div id="chat-head-s">🟢 Tekoäly vastaa heti</div>
+      </div>
+    </div>
+    <button id="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div id="chat-msgs"></div>
+  <div id="chat-sugs">
+    <button class="csug" onclick="sendSug(this)">Miten varaan?</button>
+    <button class="csug" onclick="sendSug(this)">Hinnat?</button>
+    <button class="csug" onclick="sendSug(this)">How to book?</button>
+    <button class="csug" onclick="sendSug(this)">Liity tekijäksi</button>
+  </div>
+  <div id="chat-input-row">
+    <input id="chat-input" placeholder="Kirjoita kysymys..." onkeydown="if(event.key==='Enter')sendChat()">
+    <button id="chat-send" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<script>
+const JUST_API_KEY = '';
+const JUST_SYSTEM = `Olet Just.-alustan ystävällinen asiakaspalveluassistentti. Vastaat sekä suomeksi että englanniksi asiakkaan kielen mukaan. Ole lyhyt ja selkeä.
+
+JUST. ON:
+- Digitaalinen palvelualusta joka yhdistää asiakkaat ja laadunvarmistetut ammattilaiset
+- Varaukset: justapp.fi | Info: getjust.fi
+- Ylläpitäjä: Kansallisvaranto Oy, Turku
+
+PALVELUT (aktiiviset):
+- Autopesu: alkaen 20€ – ulko/sisäpesu, vahaus, pinnoitus, hakupalvelu
+- Renkaanvaihto: henkilöauto 25€, pakettiauto 30€, rengashotelli 80€/kausi
+Tulossa: Kodinsiivous, Autohuolto, Pintakäsittely, Pihatyöt, Rakennusala
+
+MITEN VARAUS TOIMII:
+1. Mene justapp.fi
+2. Valitse palvelu ja tekijä (näet kuvan + arvostelut etukäteen)
+3. Valitse aika kalenterista
+4. Maksa käteisellä tai kortilla työn jälkeen
+5. Saat SMS-linkin arviointilomakkeeseen
+
+OHJAUSLOGIIKKA – noudata aina:
+- Yleiset kysymykset palveluista ja hinnoista → vastaa itse
+- Varaukset → ohjaa aina justapp.fi:hin
+- Erikoistoiveet tai palvelua ei listalla → "Varaa aika justapp.fi:ssä ja kirjoita erikoistoiveesi Lisätiedot-kenttään – tekijä ottaa yhteyttä ennen työtä"
+- Reklamaatiot, laskutus, tekniset ongelmat → info.getjust@gmail.com
+- ÄLÄ koskaan ohjaa info.getjust@gmail.com:iin varaus- tai palvelukyselyissä
+
+KUMPPANUUSHINNOITTELU:
+Free: 0€/kk, 12% provisio | Pro: 29€/kk, 5% | Business: 79€/kk, 2% | Enterprise: 199€/kk, 0%
+
+PERUUTUS: 24h+ ennen = ilmainen | alle 24h = 50% | ei saavu = 100%`;
+
+let chatOpen = false;
+let chatHistory = [];
+let chatStarted = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chat-win').classList.toggle('open', chatOpen);
+  if (chatOpen && !chatStarted) {
+    chatStarted = true;
+    document.getElementById('chat-pulse').style.display = 'none';
+    addMsg('bot', 'Hei! 👋 Olen Just.-asiakaspalveluassistentti.\n\nHi! I\'m the Just. assistant. How can I help?');
+  }
+  if (chatOpen) setTimeout(() => document.getElementById('chat-input').focus(), 100);
+}
+
+function addMsg(role, text) {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'cmsg ' + role;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function sendSug(btn) {
+  document.getElementById('chat-input').value = btn.textContent;
+  document.getElementById('chat-sugs').style.display = 'none';
+  sendChat();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  document.getElementById('chat-send').disabled = true;
+  document.getElementById('chat-sugs').style.display = 'none';
+  addMsg('user', msg);
+  chatHistory.push({role:'user', content:msg});
+  const typing = addMsg('typing', '✦ Kirjoittaa...');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': JUST_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
+        system: JUST_SYSTEM,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Pahoittelen, jokin meni pieleen. Yritä uudelleen!';
+    typing.remove();
+    addMsg('bot', reply);
+    chatHistory.push({role:'assistant', content:reply});
+  } catch(e) {
+    typing.remove();
+    addMsg('bot', 'Verkkovirhe – ota yhteyttä info.getjust@gmail.com');
+  }
+  document.getElementById('chat-send').disabled = false;
+}
+</script>
+
+</body>
+</html>
