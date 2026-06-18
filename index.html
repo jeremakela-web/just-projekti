@@ -73,7 +73,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 7%; h
 .lb { background: none; border: none; color: var(--sub); padding: 4px 12px; border-radius: 16px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.18s; }
 .lb.on { background: var(--g1); color: #fff; }
 
-#hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 7% 60px; position: relative; }
+#hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 7% 60px; position: relative; background-image: linear-gradient(rgba(8,20,12,0.68), rgba(8,20,12,0.68)), url('https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600&h=900&fit=crop&auto=format&q=75'); background-size: cover; background-position: center; }
 .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 80% 30%, rgba(126,207,150,0.12) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 10% 80%, rgba(45,102,69,0.06) 0%, transparent 55%); pointer-events: none; }
 .hero-bg::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(45,102,69,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(45,102,69,0.03) 1px, transparent 1px); background-size: 80px 80px; }
 
@@ -161,6 +161,17 @@ h1 em { font-style: italic; color: var(--g1); }
 .stats-strip { margin-top: 68px; padding-top: 32px; border-top: 1px solid rgba(45,102,69,0.1); display: flex; gap: 44px; flex-wrap: wrap; animation: fadeUp 0.7s ease 0.3s both; }
 .stat-n { font-family: "Syne", sans-serif; font-size: 1.85rem; font-weight: 800; color: var(--g1); line-height: 1; letter-spacing: -0.04em; }
 .stat-l { font-size: 0.73rem; color: var(--sub); margin-top: 3px; font-weight: 300; }
+
+/* Hero overrides for dark background photo */
+#hero h1 { color: #fff; }
+#hero h1 em { color: var(--g4); }
+#hero .tagline-sub { color: rgba(255,255,255,0.72); }
+#hero .hero-badge { background: rgba(126,207,150,0.12); border-color: rgba(126,207,150,0.25); color: var(--g4); }
+#hero .btn-ghost { color: rgba(255,255,255,0.78); border-color: rgba(255,255,255,0.22); }
+#hero .btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+#hero .stats-strip { border-top-color: rgba(255,255,255,0.12); }
+#hero .stat-n { color: var(--g4); }
+#hero .stat-l { color: rgba(255,255,255,0.5); }
 
 /* Hero service images */
 .hero-imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:48px;animation:fadeUp 0.7s ease 0.28s both;}
@@ -280,7 +291,7 @@ body.lang-en .en-l { display: revert !important; }
         <div class="hero-img-cap"><span class="fi-l">Autonpesu</span><span class="en-l">Car wash</span></div>
       </div>
       <div class="hero-img-wrap">
-        <img src="https://images.unsplash.com/photo-1558507334-57300f59ad62?w=400&h=500&fit=crop&auto=format&q=80" alt="Moving and transport service" loading="lazy" width="400" height="500">
+        <img src="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=400&h=500&fit=crop&auto=format&q=80" alt="Moving and transport service" loading="lazy" width="400" height="500">
         <div class="hero-img-cap"><span class="fi-l">Muutto</span><span class="en-l">Moving</span></div>
       </div>
       <div class="hero-img-wrap">
