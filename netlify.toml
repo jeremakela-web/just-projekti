@@ -1,10 +1,8 @@
-[functions]
-  directory = "netlify/functions"
+[build]
+  functions = "netlify/functions"
+  publish = "."
 
 [[redirects]]
   from = "/admin"
   to = "/admin.html"
   status = 200
-
-[build]
-  functions = "netlify/functions"
