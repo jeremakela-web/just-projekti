@@ -6,3 +6,11 @@
   from = "/admin"
   to = "/admin.html"
   status = 200
+
+# Production only: forward all Netlify URLs to the canonical domain.
+# Kept out of deploy-preview context so preview health checks can pass.
+[[context.production.redirects]]
+  from = "/*"
+  to = "https://getjust.fi/:splat"
+  status = 301
+  force = true
