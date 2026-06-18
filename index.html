@@ -393,12 +393,18 @@ body.lang-en .en-l { display: revert !important; }
 </footer>
 
 <script>
+function updateJustappLinks(lang) {
+  document.querySelectorAll('a[href^="https://justapp.fi"]').forEach(a => {
+    a.href = 'https://justapp.fi?lang=' + lang;
+  });
+}
 function setLang(lang, btn) {
   document.querySelectorAll('.lb').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   document.body.classList.remove('lang-fi', 'lang-en');
   document.body.classList.add('lang-' + lang);
   localStorage.setItem('just-lang', lang);
+  updateJustappLinks(lang);
 }
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('just-lang') || 'fi';
@@ -409,6 +415,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const fiFlagBtn = document.querySelector('.nav-lang .lb:first-child');
     if (fiFlagBtn) fiFlagBtn.classList.remove('on');
   }
+  updateJustappLinks(saved);
 });
 function setTagline(idx, btn) {
   document.querySelectorAll('.ttab').forEach(b => b.classList.remove('on'));
