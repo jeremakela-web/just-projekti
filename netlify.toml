@@ -6,13 +6,3 @@
   from = "/admin"
   to = "/admin.html"
   status = 200
-
-[[redirects]]
-  from = "/login"
-  to = "/login.html"
-  status = 200
-
-[[redirects]]
-  from = "/justapp"
-  to = "/justapp.html"
-  status = 200
