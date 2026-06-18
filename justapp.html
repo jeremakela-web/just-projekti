@@ -17,10 +17,12 @@ body{font-family:"Instrument Sans",sans-serif;background:var(--off);min-height:1
 .app-uname{color:rgba(255,255,255,0.7);font-size:0.78rem;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .app-logout{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:none;border-radius:6px;padding:5px 10px;font-size:0.72rem;cursor:pointer;font-family:inherit;transition:all 0.15s}
 .app-logout:hover{background:rgba(255,255,255,0.16);color:#fff}
-main{flex:1;overflow-y:auto;padding:20px 16px 84px}
+main{flex:1;overflow-y:auto;padding:20px 16px 84px;display:none}
 .tab-pane{display:none}
 .tab-pane.on{display:block}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:540px;background:#fff;border-top:1.5px solid rgba(45,102,69,0.1);display:flex;z-index:50}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:540px;background:#fff;border-top:1.5px solid rgba(45,102,69,0.1);display:none;z-index:50}
+#auth-overlay{position:fixed;inset:0;background:var(--off);z-index:999;display:flex;align-items:center;justify-content:center}
+#auth-overlay .spin{width:28px;height:28px;border:2.5px solid rgba(45,102,69,0.18);border-top-color:var(--g1);border-radius:50%;animation:spin .7s linear infinite}
 .bnav-btn{flex:1;padding:10px 0 12px;border:none;background:none;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--sub);font-size:0.63rem;font-weight:600;letter-spacing:0.02em;transition:color 0.15s}
 .bnav-btn.on{color:var(--g1)}
 .bnav-ic{font-size:1.25rem;line-height:1}
@@ -94,6 +96,8 @@ main{flex:1;overflow-y:auto;padding:20px 16px 84px}
 </head>
 <body>
 
+<div id="auth-overlay"><div class="spin"></div></div>
+
 <header class="app-hdr">
   <div class="app-logo">Just<span>.</span></div>
   <div class="app-right">
@@ -110,35 +114,35 @@ main{flex:1;overflow-y:auto;padding:20px 16px 84px}
     <p class="sec-sub">Kaikki tekijät laadunvarmistettuja</p>
     <div class="cat-grid">
       <div class="cat-card" onclick="openBooking('Autopesu')">
-        <img src="https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Autopesu" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Autopesu" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Autopesu</div><div class="cat-price">alkaen 25 €</div><span class="cat-badge">Saatavilla</span></div>
       </div>
       <div class="cat-card" onclick="openBooking('Renkaanvaihto')">
-        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Renkaanvaihto" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Renkaanvaihto" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Renkaanvaihto</div><div class="cat-price">alkaen 50 €</div><span class="cat-badge">Saatavilla</span></div>
       </div>
       <div class="cat-card" onclick="openBooking('Kodinsiivous')">
-        <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Kodinsiivous" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Kodinsiivous" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Kodinsiivous</div><div class="cat-price">alkaen 60 €</div><span class="cat-badge">Saatavilla</span></div>
       </div>
       <div class="cat-card" onclick="openBooking('Muutto')">
-        <img src="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Muutto" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Muutto" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Muutto</div><div class="cat-price">alkaen 80 €/h</div><span class="cat-badge">Saatavilla</span></div>
       </div>
       <div class="cat-card" onclick="openBooking('Kodinkorjaus')">
-        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Kodinkorjaus" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Kodinkorjaus" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Kodinkorjaus</div><div class="cat-price">alkaen 45 €/h</div><span class="cat-badge">Saatavilla</span></div>
       </div>
       <div class="cat-card" onclick="openBooking('Puutarhatyöt')">
-        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Puutarhatyöt" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Puutarhatyöt" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Puutarhatyöt</div><div class="cat-price">alkaen 35 €/h</div><span class="cat-badge">Saatavilla</span></div>
       </div>
       <div class="cat-card" onclick="openBooking('Lumenluonti')">
-        <img src="https://images.unsplash.com/photo-1548777123-e216912df7d8?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Lumenluonti" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1548777123-e216912df7d8?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Lumenluonti" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Lumenluonti</div><div class="cat-price">alkaen 40 €</div><span class="cat-badge">Saatavilla</span></div>
       </div>
       <div class="cat-card" onclick="openBooking('Ikkunanpesu')">
-        <img src="https://images.unsplash.com/photo-1527515637462-cff94ebe84ea?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Ikkunanpesu" loading="lazy" width="80" height="80">
+        <img src="https://images.unsplash.com/photo-1527515637462-cff94ebe84ea?w=80&h=80&fit=crop&auto=format&q=80" class="cat-img" alt="Ikkunanpesu" loading="eager" width="80" height="80">
         <div class="cat-info"><div class="cat-name">Ikkunanpesu</div><div class="cat-price">alkaen 30 €</div><span class="cat-badge">Saatavilla</span></div>
       </div>
     </div>
@@ -336,17 +340,24 @@ async function doLogout(){
 
 /* ── Auth guard ── */
 (async()=>{
-  const{data:{session:s}}=await sb.auth.getSession();
-  if(!s){location.href='/login?redirect=/justapp';return;}
-  session=s;
-  const name=s.user?.user_metadata?.full_name||s.user?.email||'';
-  document.getElementById('uname').textContent=name;
-  const first=name.split(' ')[0]||'siellä';
-  document.getElementById('welcome-msg').innerHTML=`Hei, <strong>${first}</strong>! 👋`;
-  sb.auth.onAuthStateChange((evt,ns)=>{
-    if(evt==='SIGNED_OUT')location.href='/';
-    else if(ns)session=ns;
-  });
+  try{
+    const{data:{session:s}}=await sb.auth.getSession();
+    if(!s){location.href='/login?redirect=/justapp';return;}
+    session=s;
+    const name=s.user?.user_metadata?.full_name||s.user?.email||'';
+    document.getElementById('uname').textContent=name;
+    const first=name.split(' ')[0]||'siellä';
+    document.getElementById('welcome-msg').innerHTML=`Hei, <strong>${first}</strong>! 👋`;
+    document.getElementById('auth-overlay').remove();
+    document.querySelector('main').style.display='flex';
+    document.querySelector('.bottom-nav').style.display='flex';
+    sb.auth.onAuthStateChange((evt,ns)=>{
+      if(evt==='SIGNED_OUT')location.href='/';
+      else if(ns)session=ns;
+    });
+  }catch(_){
+    location.href='/login?redirect=/justapp';
+  }
 })();
 </script>
 </body>
