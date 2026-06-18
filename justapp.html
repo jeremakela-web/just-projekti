@@ -335,14 +335,26 @@ async function saveProfile(){
 
 async function doLogout(){
   await sb.auth.signOut();
-  location.href='/';
+  location.href='https://getjust.fi';
 }
 
 /* ── Auth guard ── */
+const LOGIN_URL='https://getjust.fi/login?redirect=https://justapp.fi';
+
+async function restoreSessionFromHash(){
+  const h=new URLSearchParams(location.hash.slice(1));
+  const at=h.get('access_token'),rt=h.get('refresh_token');
+  if(at&&rt){
+    await sb.auth.setSession({access_token:at,refresh_token:rt});
+    history.replaceState(null,'',location.pathname+location.search);
+  }
+}
+
 (async()=>{
   try{
+    await restoreSessionFromHash();
     const{data:{session:s}}=await sb.auth.getSession();
-    if(!s){location.href='/login?redirect=/justapp';return;}
+    if(!s){location.href=LOGIN_URL;return;}
     session=s;
     const name=s.user?.user_metadata?.full_name||s.user?.email||'';
     document.getElementById('uname').textContent=name;
@@ -352,11 +364,11 @@ async function doLogout(){
     document.querySelector('main').style.display='flex';
     document.querySelector('.bottom-nav').style.display='flex';
     sb.auth.onAuthStateChange((evt,ns)=>{
-      if(evt==='SIGNED_OUT')location.href='/';
+      if(evt==='SIGNED_OUT')location.href='https://getjust.fi';
       else if(ns)session=ns;
     });
   }catch(_){
-    location.href='/login?redirect=/justapp';
+    location.href=LOGIN_URL;
   }
 })();
 </script>
