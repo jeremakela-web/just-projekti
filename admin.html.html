@@ -32,8 +32,14 @@ body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--
 .btn-logout{background:none;border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);border-radius:8px;padding:5px 12px;font-size:0.72rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
 .btn-logout:hover{border-color:rgba(255,255,255,0.3);color:#fff}
 
+/* TABS */
+.admin-tabs{background:#fff;border-bottom:1.5px solid rgba(45,102,69,0.1);display:flex;padding:0 20px;position:sticky;top:54px;z-index:90}
+.atab{flex:none;padding:12px 18px;border:none;background:none;font-family:inherit;font-size:0.82rem;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all 0.15s}
+.atab.on{color:var(--g1);border-bottom-color:var(--g1)}
+
 .admin-wrap{padding:20px;max-width:700px;margin:0 auto}
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stats-row.cols2{grid-template-columns:repeat(2,1fr)}
 .stat-card{background:var(--card);border-radius:12px;padding:14px 16px;border:1.5px solid rgba(45,102,69,0.1)}
 .stat-n{font-family:"Syne",sans-serif;font-weight:800;font-size:1.6rem;color:var(--g1)}
 .stat-l{font-size:0.68rem;color:var(--sub);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
@@ -48,10 +54,10 @@ body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--
 .pc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .pc-avatar{width:44px;height:44px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-family:"Syne",sans-serif;font-weight:700;color:#fff;font-size:1rem;flex-shrink:0;overflow:hidden}
 .pc-avatar img{width:100%;height:100%;object-fit:cover}
-.pc-info{flex:1}
+.pc-info{flex:1;min-width:0}
 .pc-name{font-weight:700;font-size:0.92rem}
 .pc-meta{font-size:0.73rem;color:var(--sub);margin-top:1px}
-.pc-status{display:inline-flex;align-items:center;gap:4px;font-size:0.62rem;font-weight:700;letter-spacing:0.06em;padding:3px 8px;border-radius:50px;text-transform:uppercase}
+.pc-status{display:inline-flex;align-items:center;gap:4px;font-size:0.62rem;font-weight:700;letter-spacing:0.06em;padding:3px 8px;border-radius:50px;text-transform:uppercase;flex-shrink:0}
 .pc-status.active{background:rgba(45,102,69,0.1);color:var(--g1)}
 .pc-status.inactive{background:rgba(220,38,38,0.08);color:var(--err)}
 .pc-details{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
@@ -65,13 +71,39 @@ body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--
 .btn-delete{padding:8px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;background:rgba(220,38,38,0.07);border:1.5px solid rgba(220,38,38,0.2);color:var(--err);transition:all 0.2s}
 .btn-delete:hover{background:rgba(220,38,38,0.12)}
 
+/* CUSTOMER CARDS */
+.cust-card{background:var(--card);border-radius:14px;padding:16px;border:1.5px solid rgba(45,102,69,0.1);margin-bottom:10px}
+.cust-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.cust-reg{text-align:right;flex-shrink:0}
+.cust-reg-label{font-size:0.62rem;color:var(--sub);text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+.cust-reg-date{font-size:0.8rem;font-weight:600;color:var(--ink)}
+.cust-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bk-count-badge{font-size:0.68rem;font-weight:700;background:rgba(45,102,69,0.08);color:var(--g1);padding:3px 10px;border-radius:50px}
+.cust-actions{display:flex;gap:8px}
+.btn-view-bk{padding:7px 12px;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;background:var(--g6);border:1.5px solid rgba(45,102,69,0.2);color:var(--g1);transition:all 0.2s}
+.btn-view-bk:hover{background:rgba(45,102,69,0.12)}
+
+/* CUSTOMER BOOKINGS MODAL */
+.bk-modal-list{display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto}
+.bk-modal-item{border:1.5px solid rgba(45,102,69,0.1);border-radius:10px;padding:10px 12px}
+.bk-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.bk-modal-svc{font-weight:700;font-size:0.88rem}
+.bk-badge{font-size:0.6rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 8px;border-radius:5px}
+.s-pending{background:rgba(200,168,75,0.12);color:#8a6800}
+.s-confirmed{background:rgba(45,102,69,0.1);color:var(--g1)}
+.s-completed{background:rgba(45,102,69,0.18);color:var(--g1)}
+.s-cancelled{background:rgba(220,0,0,0.08);color:#c00}
+.bk-modal-date{font-size:0.75rem;color:var(--sub)}
+.bk-modal-notes{font-size:0.73rem;color:var(--sub);font-style:italic;margin-top:2px}
+
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.on{display:flex}
-.modal{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:340px;text-align:center}
-.modal h3{font-family:"Syne",sans-serif;font-weight:700;font-size:1rem;margin-bottom:8px}
+.modal{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:400px}
+.modal h3{font-family:"Syne",sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px}
+.modal-sub{font-size:0.8rem;color:var(--sub);margin-bottom:16px}
 .modal p{font-size:0.82rem;color:var(--sub);margin-bottom:20px;line-height:1.5}
-.modal-btns{display:flex;gap:8px}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
 .btn-cancel{flex:1;padding:10px;border-radius:8px;border:1.5px solid rgba(45,102,69,0.2);background:none;color:var(--ink);font-family:inherit;font-weight:600;font-size:0.82rem;cursor:pointer}
 .btn-confirm-del{flex:1;padding:10px;border-radius:8px;border:none;background:var(--err);color:#fff;font-family:inherit;font-weight:600;font-size:0.82rem;cursor:pointer}
 
@@ -105,29 +137,75 @@ body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--
     <button class="btn-logout" onclick="logout()">Kirjaudu ulos</button>
   </nav>
 
+  <div class="admin-tabs">
+    <button class="atab on" id="atab-partners" onclick="showAdminTab('partners')">Tekijät</button>
+    <button class="atab" id="atab-customers" onclick="showAdminTab('customers')">Asiakkaat</button>
+  </div>
+
   <div class="admin-wrap">
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-n" id="stat-total">–</div><div class="stat-l">Tekijät yht.</div></div>
-      <div class="stat-card"><div class="stat-n" id="stat-active">–</div><div class="stat-l">Aktiivisia</div></div>
-      <div class="stat-card"><div class="stat-n" id="stat-cats">–</div><div class="stat-l">Kategoriat</div></div>
+
+    <!-- PARTNERS TAB -->
+    <div id="tab-partners">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-n" id="stat-total">–</div><div class="stat-l">Tekijät yht.</div></div>
+        <div class="stat-card"><div class="stat-n" id="stat-active">–</div><div class="stat-l">Aktiivisia</div></div>
+        <div class="stat-card"><div class="stat-n" id="stat-cats">–</div><div class="stat-l">Kategoriat</div></div>
+      </div>
+      <div class="section-title">
+        Kaikki tekijät
+        <button class="btn-refresh" onclick="loadPartners()">↻ Päivitä</button>
+      </div>
+      <div id="partners-list"><div class="loading"><span class="spinner"></span>Ladataan...</div></div>
     </div>
 
-    <div class="section-title">
-      Kaikki tekijät
-      <button class="btn-refresh" onclick="loadPartners()">↻ Päivitä</button>
+    <!-- CUSTOMERS TAB -->
+    <div id="tab-customers" style="display:none">
+      <div class="stats-row cols2">
+        <div class="stat-card"><div class="stat-n" id="stat-cust-total">–</div><div class="stat-l">Asiakkaat yht.</div></div>
+        <div class="stat-card"><div class="stat-n" id="stat-cust-bk">–</div><div class="stat-l">Varauksia yht.</div></div>
+      </div>
+      <div class="section-title">
+        Kaikki asiakkaat
+        <button class="btn-refresh" onclick="loadCustomers()">↻ Päivitä</button>
+      </div>
+      <div id="customers-list"><div class="loading"><span class="spinner"></span>Ladataan...</div></div>
     </div>
-    <div id="partners-list"><div class="loading"><span class="spinner"></span>Ladataan...</div></div>
+
   </div>
 </div>
 
-<!-- DELETE MODAL -->
+<!-- PARTNER DELETE MODAL -->
 <div class="modal-overlay" id="del-modal">
   <div class="modal">
     <h3>Poista tekijä?</h3>
     <p id="del-modal-name">Tätä toimintoa ei voi peruuttaa.</p>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">Peruuta</button>
-      <button class="btn-confirm-del" onclick="confirmDelete()">Poista</button>
+      <button class="btn-cancel" onclick="closeModal('del-modal')">Peruuta</button>
+      <button class="btn-confirm-del" onclick="confirmDeletePartner()">Poista</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMER BOOKINGS MODAL -->
+<div class="modal-overlay" id="cust-bk-modal">
+  <div class="modal" style="max-width:480px">
+    <h3 id="cust-bk-title">Asiakkaan varaukset</h3>
+    <p class="modal-sub" id="cust-bk-sub"></p>
+    <div id="cust-bk-list"><div class="loading"><span class="spinner"></span>Ladataan...</div></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" style="flex:none;padding:10px 24px" onclick="closeModal('cust-bk-modal')">Sulje</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMER DELETE MODAL -->
+<div class="modal-overlay" id="del-cust-modal">
+  <div class="modal">
+    <h3>Poista asiakastili?</h3>
+    <p id="del-cust-name">Tätä toimintoa ei voi peruuttaa. Kaikki varaukset poistetaan.</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('del-cust-modal')">Peruuta</button>
+      <button class="btn-confirm-del" onclick="confirmDeleteCustomer()">Poista</button>
     </div>
   </div>
 </div>
@@ -137,7 +215,12 @@ body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--
 <script>
 let sessionPassword = null;
 let partners = [];
-let deleteId = null;
+let customers = [];
+let deletePartnerId = null;
+let deleteCustomerId = null;
+
+const STATUS_LABEL = {pending:'Odottaa',confirmed:'Vahvistettu',completed:'Valmis',cancelled:'Peruutettu'};
+const STATUS_CLS = {pending:'s-pending',confirmed:'s-confirmed',completed:'s-completed',cancelled:'s-cancelled'};
 
 async function adminApi(action, params = {}) {
   const res = await fetch('/.netlify/functions/admin-api', {
@@ -182,6 +265,16 @@ function logout() {
   document.getElementById('pwd-input').value = '';
 }
 
+/* ── Tab switching ── */
+function showAdminTab(tab) {
+  document.getElementById('atab-partners').classList.toggle('on', tab === 'partners');
+  document.getElementById('atab-customers').classList.toggle('on', tab === 'customers');
+  document.getElementById('tab-partners').style.display = tab === 'partners' ? '' : 'none';
+  document.getElementById('tab-customers').style.display = tab === 'customers' ? '' : 'none';
+  if (tab === 'customers' && !customers.length) loadCustomers();
+}
+
+/* ── Partners ── */
 async function loadPartners() {
   document.getElementById('partners-list').innerHTML = '<div class="loading"><span class="spinner"></span>Ladataan...</div>';
   try {
@@ -233,7 +326,7 @@ function renderPartners() {
         <button class="btn-toggle ${p.active?'deactivate':'activate'}" onclick="toggleActive(${p.id},${p.active})">
           ${p.active ? '⏸ Deaktivoi' : '▶ Aktivoi'}
         </button>
-        <button class="btn-delete" onclick="openDeleteModal(${p.id},'${(p.contact_name||'').replace(/'/g,\"\\'\")}')">&#x1F5D1; Poista</button>
+        <button class="btn-delete" onclick="openDeletePartnerModal(${p.id},'${(p.contact_name||'').replace(/'/g,"\\'")}')">🗑 Poista</button>
       </div>
     </div>`;
   }).join('');
@@ -247,25 +340,125 @@ async function toggleActive(id, currentActive) {
   } catch(e) { showToast('Virhe: ' + e.message); }
 }
 
-function openDeleteModal(id, name) {
-  deleteId = id;
+function openDeletePartnerModal(id, name) {
+  deletePartnerId = id;
   document.getElementById('del-modal-name').textContent = `Poistetaan: ${name}. Tätä ei voi peruuttaa.`;
   document.getElementById('del-modal').classList.add('on');
 }
 
-function closeModal() {
-  deleteId = null;
-  document.getElementById('del-modal').classList.remove('on');
-}
-
-async function confirmDelete() {
-  if (!deleteId) return;
-  closeModal();
+async function confirmDeletePartner() {
+  if (!deletePartnerId) return;
+  closeModal('del-modal');
   try {
-    await adminApi('deletePartner', { id: deleteId });
+    await adminApi('deletePartner', { id: deletePartnerId });
+    deletePartnerId = null;
     showToast('Tekijä poistettu ✓');
     loadPartners();
   } catch(e) { showToast('Virhe: ' + e.message); }
+}
+
+/* ── Customers ── */
+async function loadCustomers() {
+  document.getElementById('customers-list').innerHTML = '<div class="loading"><span class="spinner"></span>Ladataan...</div>';
+  try {
+    customers = await adminApi('getCustomers');
+    renderCustomers();
+  } catch(e) {
+    document.getElementById('customers-list').innerHTML = '<div class="loading">Virhe: ' + e.message + '</div>';
+  }
+}
+
+function renderCustomers() {
+  const totalBk = customers.reduce((s, c) => s + (c.booking_count || 0), 0);
+  document.getElementById('stat-cust-total').textContent = customers.length;
+  document.getElementById('stat-cust-bk').textContent = totalBk;
+
+  if (!customers.length) {
+    document.getElementById('customers-list').innerHTML = '<div class="loading">Ei asiakkaita vielä.</div>';
+    return;
+  }
+
+  document.getElementById('customers-list').innerHTML = customers.map(c => {
+    const initial = ((c.full_name || c.email || '?').charAt(0)).toUpperCase();
+    const created = c.created_at ? new Date(c.created_at).toLocaleDateString('fi-FI') : '–';
+    const safeName = (c.full_name || c.email || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return `
+    <div class="cust-card">
+      <div class="cust-top">
+        <div class="pc-avatar">${initial}</div>
+        <div class="pc-info">
+          <div class="pc-name">${c.full_name || '<em style="color:var(--sub);font-weight:400">Nimi puuttuu</em>'}</div>
+          <div class="pc-meta">${c.email || '–'}</div>
+          <div class="pc-meta">${c.phone || '<span style="opacity:0.5">Ei puhelinnumeroa</span>'}</div>
+        </div>
+        <div class="cust-reg">
+          <div class="cust-reg-label">Rekisteröitynyt</div>
+          <div class="cust-reg-date">${created}</div>
+        </div>
+      </div>
+      <div class="cust-bottom">
+        <span class="bk-count-badge">${c.booking_count} varausta</span>
+        <div class="cust-actions">
+          <button class="btn-view-bk" onclick="viewCustomerBookings('${c.id}','${safeName}')">📋 Varaukset</button>
+          <button class="btn-delete" onclick="openDeleteCustomerModal('${c.id}','${safeName}')">🗑 Poista</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function viewCustomerBookings(userId, name) {
+  document.getElementById('cust-bk-title').textContent = name || 'Asiakkaan varaukset';
+  document.getElementById('cust-bk-sub').textContent = '';
+  document.getElementById('cust-bk-list').innerHTML = '<div class="loading"><span class="spinner"></span>Ladataan...</div>';
+  document.getElementById('cust-bk-modal').classList.add('on');
+  try {
+    const bookings = await adminApi('getCustomerBookings', { userId });
+    if (!bookings.length) {
+      document.getElementById('cust-bk-sub').textContent = 'Ei varauksia.';
+      document.getElementById('cust-bk-list').innerHTML = '';
+      return;
+    }
+    document.getElementById('cust-bk-sub').textContent = bookings.length + ' varausta';
+    document.getElementById('cust-bk-list').innerHTML = '<div class="bk-modal-list">' + bookings.map(b => {
+      const dt = b.scheduled_at ? new Date(b.scheduled_at).toLocaleString('fi-FI', {day:'numeric',month:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '–';
+      return `
+      <div class="bk-modal-item">
+        <div class="bk-modal-head">
+          <span class="bk-modal-svc">${b.service_type}</span>
+          <span class="bk-badge ${STATUS_CLS[b.status]||'s-pending'}">${STATUS_LABEL[b.status]||b.status}</span>
+        </div>
+        <div class="bk-modal-date">📅 ${dt}</div>
+        ${b.notes ? `<div class="bk-modal-notes">"${b.notes}"</div>` : ''}
+      </div>`;
+    }).join('') + '</div>';
+  } catch(e) {
+    document.getElementById('cust-bk-list').innerHTML = '<div class="loading">Virhe: ' + e.message + '</div>';
+  }
+}
+
+function openDeleteCustomerModal(userId, name) {
+  deleteCustomerId = userId;
+  document.getElementById('del-cust-name').textContent = `Poistetaan: ${name || userId}. Kaikki varaukset poistetaan. Tätä ei voi peruuttaa.`;
+  document.getElementById('del-cust-modal').classList.add('on');
+}
+
+async function confirmDeleteCustomer() {
+  if (!deleteCustomerId) return;
+  const id = deleteCustomerId;
+  closeModal('del-cust-modal');
+  try {
+    await adminApi('deleteCustomer', { userId: id });
+    deleteCustomerId = null;
+    showToast('Asiakastili poistettu ✓');
+    customers = [];
+    loadCustomers();
+  } catch(e) { showToast('Virhe: ' + e.message); }
+}
+
+/* ── Shared ── */
+function closeModal(id) {
+  document.getElementById(id).classList.remove('on');
 }
 
 function showToast(msg) {
@@ -276,8 +469,11 @@ function showToast(msg) {
   t._t = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-document.getElementById('del-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('del-modal')) closeModal();
+/* Close modals on backdrop click */
+['del-modal','cust-bk-modal','del-cust-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === document.getElementById(id)) closeModal(id);
+  });
 });
 </script>
 </body>
