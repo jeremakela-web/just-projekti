@@ -135,26 +135,48 @@ body{font-family:"Instrument Sans",sans-serif;background:var(--off);color:var(--
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPA_URL = 'https://mebuynheutnegvvofnrl.supabase.co';
-const SUPA_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYnV5bmhldXRuZWd2dm9mbnJsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Njg0MDc5MSwiZXhwIjoyMDkyNDE2NzkxfQ.yF4w9oYkT_mKLzWUqvgc4Qw80Q-vZAjNSyPXCxXr4iI';
-const ADMIN_PWD = 'just2024admin';
-
+let sessionPassword = null;
 let partners = [];
 let deleteId = null;
 
-function login() {
+async function adminApi(action, params = {}) {
+  const res = await fetch('/.netlify/functions/admin-api', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, adminPassword: sessionPassword, ...params }),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function login() {
   const pwd = document.getElementById('pwd-input').value;
-  if (pwd === ADMIN_PWD) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-screen').style.display = 'block';
-    loadPartners();
-  } else {
-    document.getElementById('login-err').style.display = 'block';
+  const errEl = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  try {
+    const res = await fetch('/.netlify/functions/check-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      sessionPassword = pwd;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-screen').style.display = 'block';
+      loadPartners();
+    } else {
+      errEl.style.display = 'block';
+      document.getElementById('pwd-input').value = '';
+    }
+  } catch {
+    errEl.style.display = 'block';
     document.getElementById('pwd-input').value = '';
   }
 }
 
 function logout() {
+  sessionPassword = null;
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('admin-screen').style.display = 'none';
   document.getElementById('pwd-input').value = '';
@@ -163,10 +185,7 @@ function logout() {
 async function loadPartners() {
   document.getElementById('partners-list').innerHTML = '<div class="loading"><span class="spinner"></span>Ladataan...</div>';
   try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/partners?select=*&order=created_at.desc`, {
-      headers: { 'apikey': SUPA_SERVICE, 'Authorization': 'Bearer ' + SUPA_SERVICE }
-    });
-    partners = await res.json();
+    partners = await adminApi('getPartners');
     renderPartners();
   } catch(e) {
     document.getElementById('partners-list').innerHTML = '<div class="loading">Virhe: ' + e.message + '</div>';
@@ -214,7 +233,7 @@ function renderPartners() {
         <button class="btn-toggle ${p.active?'deactivate':'activate'}" onclick="toggleActive(${p.id},${p.active})">
           ${p.active ? '⏸ Deaktivoi' : '▶ Aktivoi'}
         </button>
-        <button class="btn-delete" onclick="openDeleteModal(${p.id},'${(p.contact_name||'').replace(/'/g,"\\'")}')">🗑 Poista</button>
+        <button class="btn-delete" onclick="openDeleteModal(${p.id},'${(p.contact_name||'').replace(/'/g,\"\\'\")}')">&#x1F5D1; Poista</button>
       </div>
     </div>`;
   }).join('');
@@ -222,11 +241,7 @@ function renderPartners() {
 
 async function toggleActive(id, currentActive) {
   try {
-    await fetch(`${SUPA_URL}/rest/v1/partners?id=eq.${id}`, {
-      method: 'PATCH',
-      headers: { 'apikey': SUPA_SERVICE, 'Authorization': 'Bearer ' + SUPA_SERVICE, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ active: !currentActive })
-    });
+    await adminApi('toggleActive', { id, active: !currentActive });
     showToast(currentActive ? 'Deaktivoitu' : 'Aktivoitu ✓');
     loadPartners();
   } catch(e) { showToast('Virhe: ' + e.message); }
@@ -247,10 +262,7 @@ async function confirmDelete() {
   if (!deleteId) return;
   closeModal();
   try {
-    await fetch(`${SUPA_URL}/rest/v1/partners?id=eq.${deleteId}`, {
-      method: 'DELETE',
-      headers: { 'apikey': SUPA_SERVICE, 'Authorization': 'Bearer ' + SUPA_SERVICE }
-    });
+    await adminApi('deletePartner', { id: deleteId });
     showToast('Tekijä poistettu ✓');
     loadPartners();
   } catch(e) { showToast('Virhe: ' + e.message); }
