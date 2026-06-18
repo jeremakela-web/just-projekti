@@ -51,6 +51,7 @@
 }
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --ink: #0a1a0e;
@@ -72,6 +73,11 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 7%; h
 .nav-lang { display: flex; gap: 2px; background: rgba(45,102,69,0.07); border-radius: 20px; padding: 3px; }
 .lb { background: none; border: none; color: var(--sub); padding: 4px 12px; border-radius: 16px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.18s; }
 .lb.on { background: var(--g1); color: #fff; }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-auth { color: var(--sub); font-size: 0.78rem; font-weight: 600; text-decoration: none; padding: 5px 14px; border: 1.5px solid rgba(45,102,69,0.2); border-radius: 50px; transition: all 0.2s; white-space: nowrap; }
+.nav-auth:hover { border-color: var(--g2); color: var(--g2); }
+.nav-auth.in { background: var(--g1); color: #fff; border-color: var(--g1); }
+.nav-auth.in:hover { background: var(--g2); border-color: var(--g2); }
 
 #hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 7% 60px; position: relative; background-image: linear-gradient(rgba(8,20,12,0.68), rgba(8,20,12,0.68)), url('https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1600&h=900&fit=crop&auto=format&q=75'); background-size: cover; background-position: center; }
 .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 80% 30%, rgba(126,207,150,0.12) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 10% 80%, rgba(45,102,69,0.06) 0%, transparent 55%); pointer-events: none; }
@@ -247,9 +253,13 @@ body.lang-en .en-l { display: revert !important; }
 
 <nav>
   <div class="logo">Just<span>.</span></div>
-  <div class="nav-lang">
-    <button class="lb on" onclick="setLang('fi',this)">🇫🇮</button>
-    <button class="lb" onclick="setLang('en',this)">🇬🇧</button>
+  <div class="nav-right">
+    <a id="nav-auth" href="/login" class="nav-auth fi-l">Kirjaudu</a>
+    <a id="nav-auth-en" href="/login" class="nav-auth en-l">Sign in</a>
+    <div class="nav-lang">
+      <button class="lb on" onclick="setLang('fi',this)">🇫🇮</button>
+      <button class="lb" onclick="setLang('en',this)">🇬🇧</button>
+    </div>
   </div>
 </nav>
 
@@ -275,8 +285,8 @@ body.lang-en .en-l { display: revert !important; }
     </div>
 
     <div class="cta-row">
-      <a href="https://justapp.fi" class="btn-main fi-l">Varaa palvelu <span class="arrow">→</span></a>
-      <a href="https://justapp.fi" class="btn-main en-l">Book a service <span class="arrow">→</span></a>
+      <a href="/justapp" onclick="return goToApp()" class="btn-main fi-l">Varaa palvelu <span class="arrow">→</span></a>
+      <a href="/justapp" onclick="return goToApp()" class="btn-main en-l">Book a service <span class="arrow">→</span></a>
       <a href="liity-tekijaksi.html" class="btn-ghost fi-l">Liity tekijäksi</a>
       <a href="liity-tekijaksi.html" class="btn-ghost en-l">Become a provider</a>
     </div>
@@ -362,8 +372,8 @@ body.lang-en .en-l { display: revert !important; }
     <p class="join-desc fi fi-l">Katso tekijät, lue arvostelut ja varaa aika.<br>Kaikki yhdessä paikassa – justapp.fi</p>
     <p class="join-desc fi en-l">See providers, read reviews and book a time.<br>All in one place – justapp.fi</p>
     <div class="join-btns fi">
-      <a href="https://justapp.fi" class="btn-jp fi-l">Varaa nyt →</a>
-      <a href="https://justapp.fi" class="btn-jp en-l">Book now →</a>
+      <a href="/justapp" onclick="return goToApp()" class="btn-jp fi-l">Varaa nyt →</a>
+      <a href="/justapp" onclick="return goToApp()" class="btn-jp en-l">Book now →</a>
       <a href="liity-tekijaksi.html" class="btn-jo fi-l">Liity tekijäksi</a>
       <a href="liity-tekijaksi.html" class="btn-jo en-l">Become a provider</a>
     </div>
@@ -384,6 +394,36 @@ body.lang-en .en-l { display: revert !important; }
 </footer>
 
 <script>
+const SUPA_URL='https://mebuynheutnegvvofnrl.supabase.co';
+const SUPA_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYnV5bmhldXRuZWd2dm9mbnJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDA3OTEsImV4cCI6MjA5MjQxNjc5MX0.IguEIQsVF1ZsTC9sjn0dZU3_Z0-o5UqJuBv7KKCwwAE';
+const sbAuth=window.supabase.createClient(SUPA_URL,SUPA_ANON);
+
+async function goToApp(){
+  const{data:{session}}=await sbAuth.auth.getSession();
+  location.href=session?'/justapp':'/login?redirect=/justapp';
+  return false;
+}
+
+function updateNavAuth(session){
+  const name=session?.user?.user_metadata?.full_name||session?.user?.email||null;
+  ['nav-auth','nav-auth-en'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(session){
+      el.textContent=name||'Oma tili';
+      el.href='/justapp';
+      el.classList.add('in');
+    }else{
+      el.textContent=id==='nav-auth'?'Kirjaudu':'Sign in';
+      el.href='/login';
+      el.classList.remove('in');
+    }
+  });
+}
+
+sbAuth.auth.getSession().then(({data:{session}})=>updateNavAuth(session));
+sbAuth.auth.onAuthStateChange((_,session)=>updateNavAuth(session));
+
 function setLang(lang, btn) {
   document.querySelectorAll('.lb').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
