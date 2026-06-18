@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kirjaudu – Just.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--ink:#0a1a0e;--g1:#2d6645;--g2:#3d8a5c;--g4:#7ecf96;--g5:#b8eacc;--g6:#e4f7ec;--off:#f6fcf8;--sub:#4a6852}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Instrument Sans",sans-serif;background:var(--off);min-height:100vh;display:flex;flex-direction:column}
+nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.nav-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.2rem;color:#fff;text-decoration:none}
+.nav-logo span{color:var(--g4)}
+.nav-back{color:rgba(255,255,255,0.5);font-size:0.82rem;text-decoration:none;transition:color 0.15s}
+.nav-back:hover{color:var(--g4)}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.card{background:#fff;border-radius:18px;padding:36px 32px;width:100%;max-width:400px;box-shadow:0 4px 32px rgba(10,26,14,0.07)}
+.card-logo{text-align:center;font-family:"Syne",sans-serif;font-weight:800;font-size:2rem;color:var(--ink);margin-bottom:4px}
+.card-logo span{color:var(--g1)}
+.card-sub{text-align:center;color:var(--sub);font-size:0.85rem;margin-bottom:24px}
+.tabs{display:flex;border:1.5px solid var(--g5);border-radius:9px;overflow:hidden;margin-bottom:22px}
+.tab{flex:1;padding:9px;border:none;background:none;cursor:pointer;font-size:0.88rem;font-family:inherit;color:var(--sub);transition:all 0.2s}
+.tab.on{background:var(--g1);color:#fff;font-weight:600}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--sub);margin-bottom:5px}
+.fg input{width:100%;padding:10px 13px;border:1.5px solid rgba(45,102,69,0.15);border-radius:9px;font-size:0.92rem;font-family:inherit;color:var(--ink);background:var(--off);outline:none;transition:border-color 0.15s}
+.fg input:focus{border-color:var(--g1);background:#fff}
+.btn{width:100%;padding:13px;background:var(--g1);color:#fff;border:none;border-radius:50px;font-size:0.97rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.2s;margin-top:4px}
+.btn:hover{background:var(--g2)}
+.btn:disabled{opacity:0.6;cursor:default}
+.err{background:#fef2f2;border:1.5px solid #fca5a5;color:#dc2626;border-radius:8px;padding:9px 13px;font-size:0.82rem;margin-bottom:14px;display:none}
+.ok{background:var(--g6);border:1.5px solid var(--g5);color:var(--g1);border-radius:8px;padding:9px 13px;font-size:0.82rem;margin-bottom:14px;display:none}
+.terms{font-size:0.72rem;color:var(--sub);text-align:center;margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-logo">Just<span>.</span></a>
+  <a href="/" class="nav-back">← Etusivulle</a>
+</nav>
+<main>
+  <div class="card">
+    <div class="card-logo">Just<span>.</span></div>
+    <p class="card-sub">Kirjaudu tai luo asiakastili</p>
+    <div class="tabs">
+      <button class="tab on" onclick="showTab('login')">Kirjaudu</button>
+      <button class="tab" onclick="showTab('signup')">Luo tili</button>
+    </div>
+    <div id="err" class="err"></div>
+    <div id="ok" class="ok"></div>
+    <div id="login-f">
+      <div class="fg"><label>Sähköposti</label><input type="email" id="li-email" placeholder="oma@email.fi" autocomplete="email"></div>
+      <div class="fg"><label>Salasana</label><input type="password" id="li-pwd" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn" id="li-btn" onclick="doLogin()">Kirjaudu sisään</button>
+    </div>
+    <div id="signup-f" style="display:none">
+      <div class="fg"><label>Koko nimi</label><input type="text" id="su-name" placeholder="Matti Meikäläinen" autocomplete="name"></div>
+      <div class="fg"><label>Sähköposti</label><input type="email" id="su-email" placeholder="oma@email.fi" autocomplete="email"></div>
+      <div class="fg"><label>Puhelinnumero</label><input type="tel" id="su-phone" placeholder="+358 40 123 4567" autocomplete="tel"></div>
+      <div class="fg"><label>Salasana (min. 6 merkkiä)</label><input type="password" id="su-pwd" placeholder="••••••••" autocomplete="new-password"></div>
+      <button class="btn" id="su-btn" onclick="doSignup()">Luo tili</button>
+      <p class="terms">Luomalla tilin hyväksyt palvelun käyttöehdot.</p>
+    </div>
+  </div>
+</main>
+<script>
+const SUPA_URL='https://mebuynheutnegvvofnrl.supabase.co';
+const SUPA_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYnV5bmhldXRuZWd2dm9mbnJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDA3OTEsImV4cCI6MjA5MjQxNjc5MX0.IguEIQsVF1ZsTC9sjn0dZU3_Z0-o5UqJuBv7KKCwwAE';
+const sb=window.supabase.createClient(SUPA_URL,SUPA_ANON);
+const redir=new URLSearchParams(location.search).get('redirect')||'/justapp';
+
+sb.auth.getSession().then(({data:{session}})=>{if(session)location.href=redir;});
+
+function showTab(t){
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',(t==='login'&&i===0)||(t==='signup'&&i===1)));
+  document.getElementById('login-f').style.display=t==='login'?'':'none';
+  document.getElementById('signup-f').style.display=t==='signup'?'':'none';
+  hideMsg();
+}
+function showErr(m){const e=document.getElementById('err');e.textContent=m;e.style.display='block';document.getElementById('ok').style.display='none';}
+function showOk(m){const e=document.getElementById('ok');e.textContent=m;e.style.display='block';document.getElementById('err').style.display='none';}
+function hideMsg(){document.getElementById('err').style.display='none';document.getElementById('ok').style.display='none';}
+
+async function doLogin(){
+  const email=document.getElementById('li-email').value.trim();
+  const pwd=document.getElementById('li-pwd').value;
+  if(!email||!pwd)return showErr('Täytä kaikki kentät.');
+  const btn=document.getElementById('li-btn');
+  btn.disabled=true;btn.textContent='Kirjaudutaan...';hideMsg();
+  const{error}=await sb.auth.signInWithPassword({email,password:pwd});
+  if(error){showErr(error.message.includes('Invalid')?'Väärä sähköposti tai salasana.':error.message);btn.disabled=false;btn.textContent='Kirjaudu sisään';}
+  else location.href=redir;
+}
+
+async function doSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const phone=document.getElementById('su-phone').value.trim();
+  const pwd=document.getElementById('su-pwd').value;
+  if(!name||!email||!phone||!pwd)return showErr('Täytä kaikki kentät.');
+  if(pwd.length<6)return showErr('Salasanan tulee olla vähintään 6 merkkiä.');
+  const btn=document.getElementById('su-btn');
+  btn.disabled=true;btn.textContent='Luodaan tiliä...';hideMsg();
+  const{data,error}=await sb.auth.signUp({email,password:pwd,options:{data:{full_name:name,phone}}});
+  if(error){showErr(error.message);btn.disabled=false;btn.textContent='Luo tili';return;}
+  if(data.user&&data.session){
+    try{
+      await fetch('/.netlify/functions/customer-api',{
+        method:'POST',
+        headers:{'Content-Type':'application/json',Authorization:'Bearer '+data.session.access_token},
+        body:JSON.stringify({action:'upsertProfile',full_name:name,phone})
+      });
+    }catch(_){}
+    location.href=redir;
+  }else{
+    showOk('Tarkista sähköpostisi ja vahvista tili linkin kautta.');
+    btn.disabled=false;btn.textContent='Luo tili';
+  }
+}
+</script>
+</body>
+</html>
