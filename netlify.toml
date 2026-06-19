@@ -6,3 +6,43 @@
   from = "/admin"
   to = "/admin.html"
   status = 200
+
+[[redirects]]
+  from = "/autopesu"
+  to = "/autopesu.html"
+  status = 200
+
+[[redirects]]
+  from = "/renkaanvaihto"
+  to = "/renkaanvaihto.html"
+  status = 200
+
+[[redirects]]
+  from = "/kodinsiivous"
+  to = "/kodinsiivous.html"
+  status = 200
+
+[[redirects]]
+  from = "/muutto"
+  to = "/muutto.html"
+  status = 200
+
+[[redirects]]
+  from = "/kodinkorjaus"
+  to = "/kodinkorjaus.html"
+  status = 200
+
+[[redirects]]
+  from = "/puutarhatyot"
+  to = "/puutarhatyot.html"
+  status = 200
+
+[[redirects]]
+  from = "/lumenluonti"
+  to = "/lumenluonti.html"
+  status = 200
+
+[[redirects]]
+  from = "/ikkunanpesu"
+  to = "/ikkunanpesu.html"
+  status = 200
