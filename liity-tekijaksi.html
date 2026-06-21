@@ -135,7 +135,7 @@ nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:cent
       <div class="row2">
         <div class="fg" id="fg-cn">
           <label data-t="lbl-cn">Yrityksen nimi *</label>
-          <input type="text" id="company-name" data-ph="ph-cn" placeholder="GB Pro Oy">
+          <input type="text" id="company-name" data-ph="ph-cn" placeholder="Yritys Oy">
           <div class="em" data-t="err-req">Pakollinen kenttä</div>
         </div>
         <div class="fg" id="fg-yt">
@@ -163,7 +163,7 @@ nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:cent
       <div class="em" data-t="err-req">Pakollinen kenttä</div>
     </div>
     <div id="private-note" style="display:none">
-      <div class="pnote"><strong data-t="pnote-title">Yksityiset tekijät:</strong> <span data-t="pnote-body">Käytä laskutuspalvelua (esim. Ukko.fi) laskuttaaksesi asiakkaita Just.-alustan kautta.</span></div>
+      <div class="pnote"><strong data-t="pnote-title">Yksityiset tekijät:</strong> <span data-t="pnote-body">Käytä laskutuspalvelua (esim. Just.Pay) laskuttaaksesi asiakkaita Just.-alustan kautta.</span></div>
       <div class="fg">
         <label data-t="lbl-msg">Viesti / Lisätiedot</label>
         <textarea id="private-msg" data-ph="ph-msg" placeholder="Kerro itsestäsi..."></textarea>
@@ -262,12 +262,12 @@ const TRANS = {
     'lbl-cn':'Yrityksen nimi *','lbl-yt':'Y-tunnus *',
     'lbl-name':'Yhteyshenkilön nimi *','lbl-email':'Sähköposti *','lbl-phone':'Puhelin *',
     'lbl-msg':'Viesti / Lisätiedot','lbl-muu':'Mikä palvelu?','lbl-bio':'Kerro itsestäsi ja palveluistasi',
-    'ph-cn':'GB Pro Oy','ph-name':'Matti Virtanen','ph-email':'matti@yritys.fi',
+    'ph-cn':'Yritys Oy','ph-name':'Matti Virtanen','ph-email':'matti@yritys.fi',
     'ph-msg':'Kerro itsestäsi...','ph-muu':'Esim. Ikkunanpesu','ph-bio':'Esim. Olemme erikoistuneet autopesuun Turun alueella...',
     'err-req':'Pakollinen kenttä','err-yt':'Tarkista muoto (1234567-8)','err-email':'Tarkista sähköpostiosoite',
     'err-cats':'Valitse vähintään yksi palvelu',
     'pnote-title':'Yksityiset tekijät:',
-    'pnote-body':'Käytä laskutuspalvelua (esim. Ukko.fi) laskuttaaksesi asiakkaita Just.-alustan kautta.',
+    'pnote-body':'Käytä laskutuspalvelua (esim. Just.Pay) laskuttaaksesi asiakkaita Just.-alustan kautta.',
     'sec2':'Palvelut ja omat hinnat',
     'sec2-sub':'Valitse palvelusi ja lisää omat hintasi. Just. tuo sinulle näkyvyyden – sinä hinnoittelet itse.',
     'cat-autopesu':'Autopesu','cat-renkaanvaihto':'Renkaanvaihto','cat-kodinsiivous':'Kodinsiivous',
@@ -303,12 +303,12 @@ const TRANS = {
     'lbl-cn':'Company name *','lbl-yt':'Business ID *',
     'lbl-name':'Contact name *','lbl-email':'Email *','lbl-phone':'Phone *',
     'lbl-msg':'Message / Additional info','lbl-muu':'What service?','lbl-bio':'Tell about yourself and your services',
-    'ph-cn':'GB Pro Ltd','ph-name':'John Smith','ph-email':'john@company.com',
+    'ph-cn':'Yritys Oy','ph-name':'John Smith','ph-email':'john@company.com',
     'ph-msg':'Tell about yourself...','ph-muu':'E.g. Window cleaning','ph-bio':'E.g. We specialize in car washing in the Turku area...',
     'err-req':'Required field','err-yt':'Check format (1234567-8)','err-email':'Check email address',
     'err-cats':'Select at least one service',
     'pnote-title':'Private providers:',
-    'pnote-body':'Use an invoicing service (e.g. Ukko.fi) to invoice customers through the Just. platform.',
+    'pnote-body':'Use an invoicing service (e.g. Just.Pay) to invoice customers through the Just. platform.',
     'sec2':'Services and your pricing',
     'sec2-sub':'Select your services and add your own prices. Just. brings you visibility – you set the prices.',
     'cat-autopesu':'Car wash','cat-renkaanvaihto':'Tire change','cat-kodinsiivous':'Home cleaning',
