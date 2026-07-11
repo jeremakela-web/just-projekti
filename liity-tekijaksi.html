@@ -90,6 +90,15 @@ nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:cent
 .btn-home{display:inline-block;background:var(--g1);color:#fff;border-radius:50px;padding:12px 26px;font-weight:600;font-size:0.86rem;text-decoration:none}
 .spinner{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.pricing-upload{border:2px dashed rgba(45,102,69,0.2);border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--off)}
+.pricing-upload:hover{border-color:var(--g2);background:var(--g6)}
+.pu-ic{font-size:1.6rem;margin-bottom:5px}
+.pu-t{font-size:0.82rem;font-weight:600;color:var(--g1);margin-bottom:2px}
+.pu-s{font-size:0.7rem;color:var(--sub)}
+.ai-status{border-radius:10px;padding:11px 14px;font-size:0.78rem;margin-top:10px;display:none;line-height:1.5}
+.ai-status.loading{background:rgba(45,102,69,0.06);border:1px solid rgba(45,102,69,0.15);color:var(--sub)}
+.ai-status.success{background:rgba(126,207,150,0.1);border:1px solid var(--g4);color:var(--g1)}
+.ai-status.warn{background:rgba(200,168,75,0.07);border:1px solid rgba(200,168,75,0.18);color:var(--sub)}
 @media(max-width:520px){.row2,.type-grid,.cat-grid,.pr-2{grid-template-columns:1fr}.exp-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -192,6 +201,16 @@ nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:cent
         <input type="text" id="muu-text" data-ph="ph-muu" placeholder="Esim. Ikkunanpesu" oninput="updateMuu(this.value)">
       </div>
     </div>
+    <div id="ai-price-section" style="margin-bottom:14px">
+      <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sub);margin-bottom:8px" data-t="ai-price-lbl">Lataa hinnasto kuvana (valinnainen)</div>
+      <div class="pricing-upload" onclick="document.getElementById('pricing-img-input').click()">
+        <input type="file" id="pricing-img-input" accept="image/jpeg,image/png,image/webp" onchange="handlePricingImg(this)" style="display:none">
+        <div class="pu-ic">🤖</div>
+        <div class="pu-t" id="pu-t" data-t="ai-price-upload-t">Lataa hinnastokuva</div>
+        <div class="pu-s" data-t="ai-price-upload-s">JPG tai PNG — AI muuntaa hinnat tekstiksi</div>
+      </div>
+      <div class="ai-status" id="ai-status"></div>
+    </div>
     <div id="price-rows"></div>
     <div class="em" id="cat-err" style="margin-top:4px" data-t="err-cats">Valitse vähintään yksi palvelu</div>
   </div>
@@ -288,6 +307,13 @@ const TRANS = {
     'pr-price':'Hinta (€)','pr-unit':'Yksikkö','pr-desc':'Palvelukuvaus',
     'pr-ph-price':'esim. 50','pr-ph-unit':'esim. /auto','pr-ph-desc':'esim. ulkopesu, sisäpuhdistus...',
     'pr-remove':'Poista','no-cat':'Valitse ensin palvelukategoria yllä',
+    'ai-price-lbl':'Lataa hinnasto kuvana (valinnainen)',
+    'ai-price-upload-t':'Lataa hinnastokuva',
+    'ai-price-upload-s':'JPG tai PNG — AI muuntaa hinnat tekstiksi',
+    'ai-price-loading':'🤖 Analysoidaan kuvaa...',
+    'ai-price-success':'✓ Hinnat lisätty automaattisesti – tarkista ja muokkaa tarvittaessa',
+    'ai-price-warn':'Tarkista hinnat manuaalisesti – kuva ei ollut riittävän selkeä',
+    'ai-price-err':'Virhe kuvan käsittelyssä – lisää hinnat manuaalisesti',
   },
   en: {
     'page-title':'Join as provider – Just.',
@@ -328,6 +354,13 @@ const TRANS = {
     'pr-price':'Price (€)','pr-unit':'Unit','pr-desc':'Service description',
     'pr-ph-price':'e.g. 50','pr-ph-unit':'e.g. /car','pr-ph-desc':'e.g. exterior wash, interior...',
     'pr-remove':'Remove','no-cat':'Select a service category above first',
+    'ai-price-lbl':'Upload pricing image (optional)',
+    'ai-price-upload-t':'Upload pricing image',
+    'ai-price-upload-s':'JPG or PNG — AI converts prices to text',
+    'ai-price-loading':'🤖 Analysing image...',
+    'ai-price-success':'✓ Prices added automatically – check and edit as needed',
+    'ai-price-warn':'Check prices manually – image was not clear enough',
+    'ai-price-err':'Error processing image – add prices manually',
   }
 };
 
@@ -519,6 +552,113 @@ async function submitForm(){
     btn.querySelector('[data-t="submit"]').textContent=T['submit'];
     alert('Virhe – ota yhteyttä info.getjust@gmail.com');
   }
+}
+
+// ── AI PRICING IMAGE ─────────────────────────────────────────────────
+async function handlePricingImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const T = TRANS[_lang];
+  const statusEl = document.getElementById('ai-status');
+  const puT = document.getElementById('pu-t');
+
+  statusEl.className = 'ai-status loading';
+  statusEl.textContent = T['ai-price-loading'];
+  statusEl.style.display = 'block';
+  puT.textContent = file.name;
+
+  try {
+    const base64 = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = e => resolve(e.target.result.split(',')[1]);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+
+    const res = await fetch('/.netlify/functions/extract-pricing', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({image: base64, mediaType: file.type || 'image/jpeg'}),
+    });
+
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+
+    if (data.unclear || !data.services || !data.services.length) {
+      statusEl.className = 'ai-status warn';
+      statusEl.textContent = T['ai-price-warn'];
+      return;
+    }
+
+    injectAiPricing(data.services);
+    statusEl.className = 'ai-status success';
+    statusEl.textContent = T['ai-price-success'];
+
+  } catch (_e) {
+    statusEl.className = 'ai-status warn';
+    statusEl.textContent = T['ai-price-err'];
+  }
+
+  input.value = '';
+}
+
+function injectAiPricing(services) {
+  const CAT_MAP = {
+    'autopesu':'autopesu','car wash':'autopesu',
+    'renkaanvaihto':'renkaanvaihto','tire change':'renkaanvaihto','tyre change':'renkaanvaihto',
+    'kodinsiivous':'kodinsiivous','home cleaning':'kodinsiivous','siivous':'kodinsiivous',
+    'autohuolto':'autohuolto','car service':'autohuolto',
+    'putkityöt':'putkityot','putkityot':'putkityot','plumbing':'putkityot',
+    'sähkötyöt':'sahkotyot','sahkotyot':'sahkotyot','electrical':'sahkotyot',
+    'pintakäsittely':'pintakasittely','pintakasittely':'pintakasittely','surface treatment':'pintakasittely',
+    'pihatyöt':'pihatyot','pihatyot':'pihatyot','yard work':'pihatyot','puutarhatyöt':'pihatyot',
+    'lemmikkipalvelut':'lemmikkipalvelut','pet services':'lemmikkipalvelut',
+  };
+
+  const unmatched = [];
+
+  services.forEach(svc => {
+    const key = (svc.name || '').toLowerCase().trim();
+    const catId = CAT_MAP[key];
+    if (catId) {
+      const btn = document.querySelector(`#cat-grid [data-id="${catId}"]`);
+      if (btn && !btn.classList.contains('on')) toggleCat(btn);
+      if (!selectedCats[catId] && btn) selectedCats[catId] = {fi: btn.dataset.fi, en: btn.dataset.en, rows: []};
+      if (selectedCats[catId]) {
+        const rows = selectedCats[catId].rows;
+        const ei = rows.findIndex(r => !r.price && !r.unit && !r.desc);
+        const nr = {price: svc.price || '', unit: svc.unit || '', desc: svc.description || ''};
+        if (ei >= 0) rows[ei] = nr; else rows.push(nr);
+      }
+    } else {
+      unmatched.push(svc);
+    }
+  });
+
+  if (unmatched.length) {
+    const muuBtn = document.querySelector('#cat-grid [data-id="muu"]');
+    if (muuBtn && !muuBtn.classList.contains('on')) toggleCat(muuBtn);
+    if (selectedCats['muu']) {
+      const firstName = unmatched[0].name;
+      selectedCats['muu'].fi = firstName;
+      selectedCats['muu'].en = firstName;
+      const muuInput = document.getElementById('muu-text');
+      if (muuInput) muuInput.value = firstName;
+      const rows = selectedCats['muu'].rows;
+      const ei = rows.findIndex(r => !r.price && !r.unit && !r.desc);
+      const nr0 = {price: unmatched[0].price || '', unit: unmatched[0].unit || '', desc: unmatched[0].description || ''};
+      if (ei >= 0) rows[ei] = nr0; else rows.push(nr0);
+      for (let i = 1; i < unmatched.length; i++) {
+        rows.push({
+          price: unmatched[i].price || '',
+          unit: unmatched[i].unit || '',
+          desc: (unmatched[i].name ? unmatched[i].name + ': ' : '') + (unmatched[i].description || ''),
+        });
+      }
+    }
+  }
+
+  renderPriceRows();
 }
 
 // Init
