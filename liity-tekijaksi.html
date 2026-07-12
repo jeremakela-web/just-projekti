@@ -613,12 +613,8 @@ async function submitForm(){
     }
 
     // Step 2: Insert partners row
-    // Generate partnerId client-side so we don't need Prefer:return=representation
-    // (avoids the SELECT-policy RLS check that PostgREST does after insert)
-    const partnerId=crypto.randomUUID();
     const pricing=JSON.stringify(Object.entries(selectedCats).map(([id,c])=>({id,fi:c.fi,en:c.en,rows:c.rows})));
     const partnerData={
-      id:partnerId,
       user_id:userId,
       company_name:currentType==='company'?document.getElementById('company-name').value.trim():null,
       contact_name:document.getElementById('contact-name').value.trim(),
@@ -636,18 +632,25 @@ async function submitForm(){
       });
     }
 
+    let partnerId;
     try{
-      const r=await fetch(`${SUPA_URL}/rest/v1/partners`,{
+      const ins=await fetch(`${SUPA_URL}/rest/v1/partners`,{
         method:'POST',
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY),'Prefer':'return=minimal'},
         body:JSON.stringify(partnerData)
       });
-      if(!r.ok){
-        const body=await r.json().catch(()=>({}));
+      if(!ins.ok){
+        const body=await ins.json().catch(()=>({}));
         const detail=body?.message||body?.details||body?.hint||JSON.stringify(body);
         showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':''));
         resetBtn();return;
       }
+      // Fetch the auto-assigned id using user_id lookup (requires partners_select_own policy)
+      const sel=await fetch(`${SUPA_URL}/rest/v1/partners?user_id=eq.${userId}&select=id`,{
+        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY)}
+      });
+      const rows=await sel.json().catch(()=>[]);
+      partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
     }catch(e){
       showSubmitError(T['err-partner-insert']+' ('+(e.message||'network error')+')');resetBtn();return;
     }
