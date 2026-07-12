@@ -605,7 +605,9 @@ async function submitForm(){
       }
       userId=d?.user?.id;
       accessToken=d?.access_token||(d?.session?.access_token)||null;
-      console.log('[submit] step1 userId=',userId,'hasAccessToken=',!!accessToken);
+      console.log('[submit] step1 userId=',userId,'hasAccessToken=',!!accessToken,
+        'access_token raw=',JSON.stringify(d?.access_token)?.slice(0,40),
+        'session.access_token raw=',JSON.stringify(d?.session?.access_token)?.slice(0,40));
       if(!userId){
         // Email confirmation required + duplicate → Supabase returns {user:null,session:null}
         const looksDupe=d?.user===null&&d?.session===null;
@@ -643,16 +645,20 @@ async function submitForm(){
     try{
       const logPayload={...partnerData,avatar_url:partnerData.avatar_url?'<base64 present>':'none'};
       console.log('[submit] step2 payload',JSON.stringify(logPayload));
+      const step2Token=accessToken||SUPA_KEY;
+      const step2IsAnon=step2Token===SUPA_KEY;
+      console.log('[submit] step2 token prefix=',step2Token.slice(0,20),'isAnon=',step2IsAnon);
       const r=await fetch(`${SUPA_URL}/rest/v1/partners`,{
         method:'POST',
-        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY),'Prefer':'return=representation'},
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+step2Token,'Prefer':'return=representation'},
         body:JSON.stringify(partnerData)
       });
       const rows=await r.json();
       console.log('[submit] step2 status',r.status,'body',JSON.stringify(rows));
       if(!r.ok){
         const detail=rows?.message||rows?.details||rows?.hint||JSON.stringify(rows);
-        showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':''));
+        const debugSuffix=' [debug: token='+step2Token.slice(0,20)+' anon='+step2IsAnon+']';
+        showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':'')+debugSuffix);
         resetBtn();return;
       }
       partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
