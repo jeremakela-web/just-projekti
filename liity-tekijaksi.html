@@ -664,6 +664,12 @@ async function submitForm(){
     // Notification email (fire-and-forget)
     fetch('/.netlify/functions/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact_name:partnerData.contact_name,company_name:partnerData.company_name,email:partnerData.email,phone:partnerData.phone,service_categories:partnerData.service_category,experience:'',type:currentType})}).catch(()=>{});
 
+    // Hard guard: success screen must NEVER appear without a confirmed partnerId
+    if(!partnerId){
+      showSubmitError(T['err-partner-insert']+' (id puuttuu — ota yhteyttä info.getjust@gmail.com)');
+      resetBtn();return;
+    }
+
     // Step 3: Stripe Connect onboarding
     console.log('[submit] step3: stripe setup, partnerId=',partnerId);
     document.getElementById('ok-email').textContent=email;
