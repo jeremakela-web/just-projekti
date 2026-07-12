@@ -585,7 +585,7 @@ async function submitForm(){
   try{
     // Step 1: Create Supabase Auth user
     console.log('[submit] step1: auth signup');
-    let userId, accessToken;
+    let userId, accessToken, jwtClaims={sub:'?',role:'?'};
     try{
       const r=await fetch(`${SUPA_URL}/auth/v1/signup`,{
         method:'POST',
@@ -605,7 +605,14 @@ async function submitForm(){
       }
       userId=d?.user?.id;
       accessToken=d?.access_token||(d?.session?.access_token)||null;
-      console.log('[submit] step1 userId=',userId,'hasAccessToken=',!!accessToken,
+      if(accessToken){
+        try{
+          const p=JSON.parse(atob(accessToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+          jwtClaims={sub:p.sub||'?',role:p.role||'?'};
+        }catch(e){jwtClaims={sub:'decode-err',role:'decode-err'};}
+      }
+      console.log('[submit] step1 userId=',userId,'jwt.sub=',jwtClaims.sub,
+        'jwt.role=',jwtClaims.role,'sub_matches_userId=',jwtClaims.sub===userId,
         'access_token raw=',JSON.stringify(d?.access_token)?.slice(0,40),
         'session.access_token raw=',JSON.stringify(d?.session?.access_token)?.slice(0,40));
       if(!userId){
@@ -657,7 +664,7 @@ async function submitForm(){
       console.log('[submit] step2 status',r.status,'body',JSON.stringify(rows));
       if(!r.ok){
         const detail=rows?.message||rows?.details||rows?.hint||JSON.stringify(rows);
-        const debugSuffix=' [debug: token='+step2Token.slice(0,20)+' anon='+step2IsAnon+']';
+        const debugSuffix=' [debug: jwt.sub='+jwtClaims.sub.slice(0,8)+' uid='+String(userId).slice(0,8)+' role='+jwtClaims.role+' match='+(jwtClaims.sub===userId)+']';
         showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':'')+debugSuffix);
         resetBtn();return;
       }
