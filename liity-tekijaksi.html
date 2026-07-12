@@ -575,7 +575,6 @@ async function submitForm(){
 
   btn.disabled=true;
   btn.querySelector('[data-t="submit"]').textContent=T['sending'];
-  console.log('[submit] validation passed');
 
   const email=document.getElementById('email').value.trim();
   const password=document.getElementById('password').value;
@@ -639,7 +638,6 @@ async function submitForm(){
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY),'Prefer':'return=minimal'},
         body:JSON.stringify(partnerData)
       });
-      console.log('[submit] step2 insert status',ins.status);
       if(!ins.ok){
         const body=await ins.json().catch(()=>({}));
         const detail=body?.message||body?.details||body?.hint||JSON.stringify(body);
@@ -650,10 +648,8 @@ async function submitForm(){
       const sel=await fetch(`${SUPA_URL}/rest/v1/partners?user_id=eq.${userId}&select=id`,{
         headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY)}
       });
-      console.log('[submit] step2 id-lookup status',sel.status);
       const rows=await sel.json().catch(()=>[]);
       partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
-      console.log('[submit] step2 id-lookup rows=',JSON.stringify(rows),'→ partnerId=',partnerId);
       if(!partnerId){
         showSubmitError(T['err-partner-insert']+' (id-lookup returned no row — ensure partners_select_own policy exists)');
         resetBtn();return;
@@ -672,10 +668,6 @@ async function submitForm(){
     }
 
     // Step 3: Stripe Connect onboarding
-    const dbgEl=document.getElementById('submit-status');
-    dbgEl.textContent='[debug] partnerId='+partnerId+' ('+typeof partnerId+') — calling Stripe...';
-    dbgEl.style.display='block';
-    console.log('[submit] step3: calling setup-partner-stripe, partnerId=',partnerId,'type=',typeof partnerId);
     document.getElementById('ok-email').textContent=email;
     try{
       const r=await fetch('https://justapp.fi/.netlify/functions/setup-partner-stripe',{
@@ -683,24 +675,18 @@ async function submitForm(){
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({partnerId,email,return_url:'https://getjust.fi/liity-tekijaksi?stripe=success',refresh_url:'https://getjust.fi/liity-tekijaksi?stripe=refresh'})
       });
-      const rawBody=await r.text();
-      console.log('[submit] step3 raw response: status=',r.status,'body=',rawBody);
-      dbgEl.textContent='[debug] stripe status='+r.status+' body='+rawBody.slice(0,300);
-      const d=JSON.parse(rawBody);
-      if(!r.ok)throw new Error(r.status+' '+rawBody.slice(0,100));
+      const d=await r.json();
+      if(!r.ok)throw new Error(r.status);
       if(d?.url){window.location.href=d.url;return;}
-      throw new Error('no url in response: '+rawBody.slice(0,100));
+      throw new Error('no url');
     }catch(e){
-      console.error('[submit] step3 error. partnerId=',partnerId,'err=',e.message);
-      dbgEl.textContent='[debug] step3 err: partnerId='+partnerId+' — '+e.message;
-      // Stripe failed: account + partners row are saved, show ok with note
+      // Stripe failed: auth account + partners row are saved, show ok with note
       document.getElementById('form-wrap').style.display='none';
       document.getElementById('ok-screen').style.display='block';
       document.getElementById('ok-stripe-note').style.display='block';
     }
 
   }catch(e){
-    console.error('[submit] unexpected error',e);
     showSubmitError(T['err-signup']+' ('+e.message+')');
     resetBtn();
   }
