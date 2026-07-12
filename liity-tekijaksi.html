@@ -639,18 +639,24 @@ async function submitForm(){
 
     let partnerId;
     try{
+      const logPayload={...partnerData,avatar_url:partnerData.avatar_url?'<base64 present>':'none'};
+      console.log('[submit] step2 payload',JSON.stringify(logPayload));
       const r=await fetch(`${SUPA_URL}/rest/v1/partners`,{
         method:'POST',
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
         body:JSON.stringify(partnerData)
       });
       const rows=await r.json();
-      console.log('[submit] step2 response status',r.status,'rows',rows);
-      if(!r.ok){showSubmitError(T['err-partner-insert']);resetBtn();return;}
+      console.log('[submit] step2 status',r.status,'body',JSON.stringify(rows));
+      if(!r.ok){
+        const detail=rows?.message||rows?.details||rows?.hint||JSON.stringify(rows);
+        showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':''));
+        resetBtn();return;
+      }
       partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
     }catch(e){
-      console.error('[submit] step2 fetch error',e);
-      showSubmitError(T['err-partner-insert']);resetBtn();return;
+      console.error('[submit] step2 fetch error',e.message||e);
+      showSubmitError(T['err-partner-insert']+' ('+(e.message||'network error')+')');resetBtn();return;
     }
 
     // Notification email (fire-and-forget)
