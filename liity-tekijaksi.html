@@ -653,6 +653,7 @@ async function submitForm(){
       console.log('[submit] step2 id-lookup status',sel.status);
       const rows=await sel.json().catch(()=>[]);
       partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
+      console.log('[submit] step2 id-lookup rows=',JSON.stringify(rows),'→ partnerId=',partnerId);
       if(!partnerId){
         showSubmitError(T['err-partner-insert']+' (id-lookup returned no row — ensure partners_select_own policy exists)');
         resetBtn();return;
@@ -671,7 +672,10 @@ async function submitForm(){
     }
 
     // Step 3: Stripe Connect onboarding
-    console.log('[submit] step3: stripe setup, partnerId=',partnerId);
+    const dbgEl=document.getElementById('submit-status');
+    dbgEl.textContent='[debug] partnerId='+partnerId+' ('+typeof partnerId+') — calling Stripe...';
+    dbgEl.style.display='block';
+    console.log('[submit] step3: calling setup-partner-stripe, partnerId=',partnerId,'type=',typeof partnerId);
     document.getElementById('ok-email').textContent=email;
     try{
       const r=await fetch('https://justapp.fi/.netlify/functions/setup-partner-stripe',{
@@ -679,13 +683,16 @@ async function submitForm(){
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({partnerId,email,return_url:'https://getjust.fi/liity-tekijaksi?stripe=success',refresh_url:'https://getjust.fi/liity-tekijaksi?stripe=refresh'})
       });
-      const d=await r.json();
-      console.log('[submit] step3 response status',r.status,'url',d?.url);
-      if(!r.ok)throw new Error(r.status);
+      const rawBody=await r.text();
+      console.log('[submit] step3 raw response: status=',r.status,'body=',rawBody);
+      dbgEl.textContent='[debug] stripe status='+r.status+' body='+rawBody.slice(0,300);
+      const d=JSON.parse(rawBody);
+      if(!r.ok)throw new Error(r.status+' '+rawBody.slice(0,100));
       if(d?.url){window.location.href=d.url;return;}
-      throw new Error('no url');
+      throw new Error('no url in response: '+rawBody.slice(0,100));
     }catch(e){
-      console.error('[submit] step3 stripe error — showing ok+note. step1 ok, step2 ok, partnerId=',partnerId,e);
+      console.error('[submit] step3 error. partnerId=',partnerId,'err=',e.message);
+      dbgEl.textContent='[debug] step3 err: partnerId='+partnerId+' — '+e.message;
       // Stripe failed: account + partners row are saved, show ok with note
       document.getElementById('form-wrap').style.display='none';
       document.getElementById('ok-screen').style.display='block';
