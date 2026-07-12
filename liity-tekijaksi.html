@@ -171,6 +171,18 @@ nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:cent
       <input type="tel" id="phone" placeholder="+358 40 123 4567">
       <div class="em" data-t="err-req">Pakollinen kenttä</div>
     </div>
+    <div class="row2">
+      <div class="fg" id="fg-password">
+        <label data-t="lbl-password">Salasana *</label>
+        <input type="password" id="password" data-ph="ph-password" placeholder="Vähintään 8 merkkiä" autocomplete="new-password">
+        <div class="em" id="em-password">Vähintään 8 merkkiä</div>
+      </div>
+      <div class="fg" id="fg-password-confirm">
+        <label data-t="lbl-password-confirm">Vahvista salasana *</label>
+        <input type="password" id="password-confirm" data-ph="ph-password" placeholder="Vähintään 8 merkkiä" autocomplete="new-password">
+        <div class="em" id="em-password-confirm">Salasanat eivät täsmää</div>
+      </div>
+    </div>
     <div id="private-note" style="display:none">
       <div class="pnote"><strong data-t="pnote-title">Yksityiset tekijät:</strong> <span data-t="pnote-body">Käytä laskutuspalvelua (esim. Just.Pay) laskuttaaksesi asiakkaita Just.-alustan kautta.</span></div>
       <div class="fg">
@@ -250,6 +262,7 @@ nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:cent
     </div>
   </div>
 
+  <div id="submit-status" style="display:none;background:rgba(229,62,62,0.07);border:1px solid rgba(229,62,62,0.25);border-radius:10px;padding:11px 14px;font-size:0.8rem;color:var(--err);margin-bottom:12px;line-height:1.5"></div>
   <button class="btn-sub" id="submit-btn" onclick="submitForm()">
     <span data-t="submit">Lähetä hakemus →</span>
   </button>
@@ -261,6 +274,7 @@ nav{background:var(--ink);padding:0 6%;height:56px;display:flex;align-items:cent
   <div class="ok-ic">🎉</div>
   <h2 data-t="ok-h2">Hakemus lähetetty!</h2>
   <p><span data-t="ok-p">Kiitos! Käsittelemme hakemuksen 1–3 arkipäivässä ja otamme yhteyttä osoitteeseen</span> <strong id="ok-email"></strong>.</p>
+  <p id="ok-stripe-note" style="display:none;margin-top:12px;font-size:0.82rem;color:var(--sub);background:rgba(200,168,75,0.07);border:1px solid rgba(200,168,75,0.18);border-radius:10px;padding:12px 14px;line-height:1.6" data-t="ok-stripe-note">Stripe-maksutili aktivoidaan myöhemmin – otamme yhteyttä.</p>
   <a href="https://getjust.fi" class="btn-home" data-t="ok-btn">Takaisin etusivulle</a>
 </div>
 
@@ -285,6 +299,15 @@ const TRANS = {
     'ph-msg':'Kerro itsestäsi...','ph-muu':'Esim. Ikkunanpesu','ph-bio':'Esim. Olemme erikoistuneet autopesuun Turun alueella...',
     'err-req':'Pakollinen kenttä','err-yt':'Tarkista muoto (1234567-8)','err-email':'Tarkista sähköpostiosoite',
     'err-cats':'Valitse vähintään yksi palvelu',
+    'err-validation':'Tarkista merkityt kentät.',
+    'lbl-password':'Salasana *','lbl-password-confirm':'Vahvista salasana *',
+    'ph-password':'Vähintään 8 merkkiä',
+    'err-password-short':'Salasanan tulee olla vähintään 8 merkkiä',
+    'err-password-match':'Salasanat eivät täsmää',
+    'err-email-taken':'Tämä sähköpostiosoite on jo rekisteröity – kirjaudu sisään justapp.fi:ssä',
+    'err-signup':'Tilin luonti epäonnistui – yritä uudelleen',
+    'err-partner-insert':'Tietojen tallennus epäonnistui – ota yhteyttä info.getjust@gmail.com',
+    'ok-stripe-note':'Stripe-maksutili aktivoidaan myöhemmin – otamme yhteyttä.',
     'pnote-title':'Yksityiset tekijät:',
     'pnote-body':'Käytä laskutuspalvelua (esim. Just.Pay) laskuttaaksesi asiakkaita Just.-alustan kautta.',
     'sec2':'Palvelut ja omat hinnat',
@@ -333,6 +356,15 @@ const TRANS = {
     'ph-msg':'Tell about yourself...','ph-muu':'E.g. Window cleaning','ph-bio':'E.g. We specialize in car washing in the Turku area...',
     'err-req':'Required field','err-yt':'Check format (1234567-8)','err-email':'Check email address',
     'err-cats':'Select at least one service',
+    'err-validation':'Check the highlighted fields.',
+    'lbl-password':'Password *','lbl-password-confirm':'Confirm password *',
+    'ph-password':'At least 8 characters',
+    'err-password-short':'Password must be at least 8 characters',
+    'err-password-match':'Passwords do not match',
+    'err-email-taken':'This email is already registered – sign in at justapp.fi',
+    'err-signup':'Account creation failed – please try again',
+    'err-partner-insert':'Failed to save details – contact info.getjust@gmail.com',
+    'ok-stripe-note':'Stripe payment account will be activated later – we\'ll be in touch.',
     'pnote-title':'Private providers:',
     'pnote-body':'Use an invoicing service (e.g. Just.Pay) to invoice customers through the Just. platform.',
     'sec2':'Services and your pricing',
@@ -499,6 +531,7 @@ function handlePhoto(input){
 // ── VALIDATE ──────────────────────────────────────────────────────────
 function validate(){
   let ok=true;
+  const T=TRANS[_lang];
   const req=(id,fail)=>{const fg=document.getElementById('fg-'+id);if(fg){fg.classList.toggle('err',fail);if(fail)ok=false;}};
   if(currentType==='company'){
     req('cn',!document.getElementById('company-name').value.trim());
@@ -507,50 +540,155 @@ function validate(){
   req('name',!document.getElementById('contact-name').value.trim());
   req('email',!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim()));
   req('phone',!document.getElementById('phone').value.trim());
+  const pwd=document.getElementById('password').value;
+  const pwdC=document.getElementById('password-confirm').value;
+  const fgPwd=document.getElementById('fg-password');
+  const fgPwdC=document.getElementById('fg-password-confirm');
+  const emPwd=document.getElementById('em-password');
+  const emPwdC=document.getElementById('em-password-confirm');
+  if(pwd.length<8){fgPwd.classList.add('err');emPwd.textContent=T['err-password-short'];ok=false;}
+  else fgPwd.classList.remove('err');
+  if(pwd.length>=8&&pwd!==pwdC){fgPwdC.classList.add('err');emPwdC.textContent=T['err-password-match'];ok=false;}
+  else if(pwd.length>=8)fgPwdC.classList.remove('err');
   const ce=document.getElementById('cat-err');
   if(!Object.keys(selectedCats).length){ce.style.display='block';ok=false;}else ce.style.display='none';
   return ok;
 }
 
 // ── SUBMIT ────────────────────────────────────────────────────────────
+function showSubmitError(msg){
+  const el=document.getElementById('submit-status');
+  el.textContent=msg;
+  el.style.display='block';
+}
+
 async function submitForm(){
-  if(!validate())return;
   const T=TRANS[_lang];
   const btn=document.getElementById('submit-btn');
+  const statusDiv=document.getElementById('submit-status');
+  statusDiv.style.display='none';
+
+  if(!validate()){
+    showSubmitError(T['err-validation']);
+    return;
+  }
+
   btn.disabled=true;
   btn.querySelector('[data-t="submit"]').textContent=T['sending'];
+
   const email=document.getElementById('email').value.trim();
-  const pricing=JSON.stringify(Object.entries(selectedCats).map(([id,c])=>({id,fi:c.fi,en:c.en,rows:c.rows})));
-  const data={
-    company_name:currentType==='company'?document.getElementById('company-name').value.trim():null,
-    contact_name:document.getElementById('contact-name').value.trim(),
-    email,phone:document.getElementById('phone').value.trim(),
-    service_category:Object.values(selectedCats).map(c=>c.fi).join(', '),
-    bio:(document.getElementById('bio').value.trim()||document.getElementById('private-msg')?.value.trim()||'')+'\n\nHINNASTO:'+pricing,
-    bio_en:document.getElementById('bio-en').value.trim()||null,
-    active:true,rating:0,job_count:0,city:'Turku'
-  };
+  const password=document.getElementById('password').value;
+
+  const resetBtn=()=>{btn.disabled=false;btn.querySelector('[data-t="submit"]').textContent=T['submit'];};
+
   try{
-    // Tallenna kuva base64-muodossa
+    // Step 1: Create Supabase Auth user
+    let userId, accessToken;
+    try{
+      const r=await fetch(`${SUPA_URL}/auth/v1/signup`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY},
+        body:JSON.stringify({email,password})
+      });
+      const d=await r.json();
+      if(!r.ok){
+        const errCode=(d?.error_code||'').toLowerCase();
+        const errMsg=(d?.msg||d?.error_description||d?.message||d?.error||'').toLowerCase();
+        const isDupe=errCode.includes('exists')||errCode.includes('registered')||
+          errMsg.includes('already')||errMsg.includes('registered')||errMsg.includes('exists')||
+          r.status===422;
+        showSubmitError(isDupe?T['err-email-taken']:T['err-signup']+(d?.msg?' ('+d.msg+')':''));
+        resetBtn();return;
+      }
+      userId=d?.user?.id;
+      accessToken=d?.access_token||(d?.session?.access_token)||null;
+      if(!userId){
+        const looksDupe=d?.user===null&&d?.session===null;
+        showSubmitError(looksDupe?T['err-email-taken']:T['err-signup']+' (no user id in response)');
+        resetBtn();return;
+      }
+    }catch(e){
+      showSubmitError(T['err-signup']+' ('+(e.message||'network error')+')');resetBtn();return;
+    }
+
+    // Step 2: Insert partners row
+    const pricing=JSON.stringify(Object.entries(selectedCats).map(([id,c])=>({id,fi:c.fi,en:c.en,rows:c.rows})));
+    const partnerData={
+      user_id:userId,
+      company_name:currentType==='company'?document.getElementById('company-name').value.trim():null,
+      contact_name:document.getElementById('contact-name').value.trim(),
+      email,phone:document.getElementById('phone').value.trim(),
+      service_category:Object.values(selectedCats).map(c=>c.fi).join(', '),
+      bio:(document.getElementById('bio').value.trim()||document.getElementById('private-msg')?.value.trim()||'')+'\n\nHINNASTO:'+pricing,
+      bio_en:document.getElementById('bio-en').value.trim()||null,
+      active:false,rating:0,job_count:0,city:'Turku'
+    };
     if(photoFiles.length>0){
-      const file=photoFiles[0];
-      await new Promise((resolve)=>{
+      await new Promise(resolve=>{
         const r=new FileReader();
-        r.onload=e=>{data.avatar_url=e.target.result;resolve();};
-        r.readAsDataURL(file);
+        r.onload=e=>{partnerData.avatar_url=e.target.result;resolve();};
+        r.readAsDataURL(photoFiles[0]);
       });
     }
-    const res=await fetch(`${SUPA_URL}/rest/v1/partners`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=minimal'},body:JSON.stringify(data)});
-    if(res.ok||res.status===201){
-      fetch('/.netlify/functions/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact_name:data.contact_name,company_name:data.company_name,email:data.email,phone:data.phone,service_categories:data.service_category,experience:'',type:currentType})}).catch(()=>{});
+
+    let partnerId;
+    try{
+      const ins=await fetch(`${SUPA_URL}/rest/v1/partners`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY),'Prefer':'return=minimal'},
+        body:JSON.stringify(partnerData)
+      });
+      if(!ins.ok){
+        const body=await ins.json().catch(()=>({}));
+        const detail=body?.message||body?.details||body?.hint||JSON.stringify(body);
+        showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':''));
+        resetBtn();return;
+      }
+      // Fetch the auto-assigned bigint id via user_id lookup (requires partners_select_own SELECT policy)
+      const sel=await fetch(`${SUPA_URL}/rest/v1/partners?user_id=eq.${userId}&select=id`,{
+        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY)}
+      });
+      const rows=await sel.json().catch(()=>[]);
+      partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
+      if(!partnerId){
+        showSubmitError(T['err-partner-insert']+' (id-lookup returned no row — ensure partners_select_own policy exists)');
+        resetBtn();return;
+      }
+    }catch(e){
+      showSubmitError(T['err-partner-insert']+' ('+(e.message||'network error')+')');resetBtn();return;
+    }
+
+    // Notification email (fire-and-forget)
+    fetch('/.netlify/functions/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contact_name:partnerData.contact_name,company_name:partnerData.company_name,email:partnerData.email,phone:partnerData.phone,service_categories:partnerData.service_category,experience:'',type:currentType})}).catch(()=>{});
+
+    // Hard guard: success screen must NEVER appear without a confirmed partnerId
+    if(!partnerId){
+      showSubmitError(T['err-partner-insert']+' (id puuttuu — ota yhteyttä info.getjust@gmail.com)');
+      resetBtn();return;
+    }
+
+    // Step 3: Stripe Connect onboarding
+    document.getElementById('ok-email').textContent=email;
+    try{
+      const r=await fetch('https://justapp.fi/.netlify/functions/setup-partner-stripe',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({partnerId,email,return_url:'https://getjust.fi/liity-tekijaksi?stripe=success',refresh_url:'https://getjust.fi/liity-tekijaksi?stripe=refresh'})
+      });
+      const d=await r.json();
+      if(!r.ok)throw new Error(r.status);
+      if(d?.url){window.location.href=d.url;return;}
+      throw new Error('no url');
+    }catch(e){
+      // Stripe failed: auth account + partners row are saved, show ok with note
       document.getElementById('form-wrap').style.display='none';
       document.getElementById('ok-screen').style.display='block';
-      document.getElementById('ok-email').textContent=email;
-    }else throw new Error(res.status);
+      document.getElementById('ok-stripe-note').style.display='block';
+    }
+
   }catch(e){
-    btn.disabled=false;
-    btn.querySelector('[data-t="submit"]').textContent=T['submit'];
-    alert('Virhe – ota yhteyttä info.getjust@gmail.com');
+    showSubmitError(T['err-signup']+' ('+e.message+')');
+    resetBtn();
   }
 }
 
