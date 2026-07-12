@@ -593,17 +593,27 @@ async function submitForm(){
         body:JSON.stringify({email,password})
       });
       const d=await r.json();
-      console.log('[submit] step1 response status',r.status,'user id',d?.user?.id);
+      console.log('[submit] step1 status',r.status,'body',JSON.stringify(d));
       if(!r.ok){
-        const msg=(d?.msg||d?.error_description||d?.message||'').toLowerCase();
-        showSubmitError(msg.includes('already')||msg.includes('registered')||r.status===422?T['err-email-taken']:T['err-signup']);
+        const errCode=(d?.error_code||'').toLowerCase();
+        const errMsg=(d?.msg||d?.error_description||d?.message||d?.error||'').toLowerCase();
+        const isDupe=errCode.includes('exists')||errCode.includes('registered')||
+          errMsg.includes('already')||errMsg.includes('registered')||errMsg.includes('exists')||
+          r.status===422;
+        showSubmitError(isDupe?T['err-email-taken']:T['err-signup']+(d?.msg?' ('+d.msg+')':''));
         resetBtn();return;
       }
       userId=d?.user?.id;
-      if(!userId){console.error('[submit] step1: no user id in response',d);showSubmitError(T['err-signup']);resetBtn();return;}
+      if(!userId){
+        // Email confirmation required + duplicate → Supabase returns {user:null,session:null}
+        const looksDupe=d?.user===null&&d?.session===null;
+        console.error('[submit] step1: no user id, looksDupe='+looksDupe+' body='+JSON.stringify(d));
+        showSubmitError(looksDupe?T['err-email-taken']:T['err-signup']+' (no user id in response)');
+        resetBtn();return;
+      }
     }catch(e){
-      console.error('[submit] step1 fetch error',e);
-      showSubmitError(T['err-signup']);resetBtn();return;
+      console.error('[submit] step1 fetch error',e.message||e);
+      showSubmitError(T['err-signup']+' ('+((e.message)||'network error')+')');resetBtn();return;
     }
 
     // Step 2: Insert partners row
