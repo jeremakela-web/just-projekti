@@ -584,8 +584,7 @@ async function submitForm(){
 
   try{
     // Step 1: Create Supabase Auth user
-    console.log('[submit] step1: auth signup');
-    let userId, accessToken, jwtClaims={sub:'?',role:'?'};
+    let userId, accessToken;
     try{
       const r=await fetch(`${SUPA_URL}/auth/v1/signup`,{
         method:'POST',
@@ -593,7 +592,6 @@ async function submitForm(){
         body:JSON.stringify({email,password})
       });
       const d=await r.json();
-      console.log('[submit] step1 status',r.status,'body',JSON.stringify(d));
       if(!r.ok){
         const errCode=(d?.error_code||'').toLowerCase();
         const errMsg=(d?.msg||d?.error_description||d?.message||d?.error||'').toLowerCase();
@@ -605,32 +603,22 @@ async function submitForm(){
       }
       userId=d?.user?.id;
       accessToken=d?.access_token||(d?.session?.access_token)||null;
-      if(accessToken){
-        try{
-          const p=JSON.parse(atob(accessToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-          jwtClaims={sub:p.sub||'?',role:p.role||'?'};
-        }catch(e){jwtClaims={sub:'decode-err',role:'decode-err'};}
-      }
-      console.log('[submit] step1 userId=',userId,'jwt.sub=',jwtClaims.sub,
-        'jwt.role=',jwtClaims.role,'sub_matches_userId=',jwtClaims.sub===userId,
-        'access_token raw=',JSON.stringify(d?.access_token)?.slice(0,40),
-        'session.access_token raw=',JSON.stringify(d?.session?.access_token)?.slice(0,40));
       if(!userId){
-        // Email confirmation required + duplicate → Supabase returns {user:null,session:null}
         const looksDupe=d?.user===null&&d?.session===null;
-        console.error('[submit] step1: no user id, looksDupe='+looksDupe+' body='+JSON.stringify(d));
         showSubmitError(looksDupe?T['err-email-taken']:T['err-signup']+' (no user id in response)');
         resetBtn();return;
       }
     }catch(e){
-      console.error('[submit] step1 fetch error',e.message||e);
-      showSubmitError(T['err-signup']+' ('+((e.message)||'network error')+')');resetBtn();return;
+      showSubmitError(T['err-signup']+' ('+(e.message||'network error')+')');resetBtn();return;
     }
 
     // Step 2: Insert partners row
-    console.log('[submit] step2: insert partner row, userId=',userId);
+    // Generate partnerId client-side so we don't need Prefer:return=representation
+    // (avoids the SELECT-policy RLS check that PostgREST does after insert)
+    const partnerId=crypto.randomUUID();
     const pricing=JSON.stringify(Object.entries(selectedCats).map(([id,c])=>({id,fi:c.fi,en:c.en,rows:c.rows})));
     const partnerData={
+      id:partnerId,
       user_id:userId,
       company_name:currentType==='company'?document.getElementById('company-name').value.trim():null,
       contact_name:document.getElementById('contact-name').value.trim(),
@@ -648,29 +636,19 @@ async function submitForm(){
       });
     }
 
-    let partnerId;
     try{
-      const logPayload={...partnerData,avatar_url:partnerData.avatar_url?'<base64 present>':'none'};
-      console.log('[submit] step2 payload',JSON.stringify(logPayload));
-      const step2Token=accessToken||SUPA_KEY;
-      const step2IsAnon=step2Token===SUPA_KEY;
-      console.log('[submit] step2 token prefix=',step2Token.slice(0,20),'isAnon=',step2IsAnon);
       const r=await fetch(`${SUPA_URL}/rest/v1/partners`,{
         method:'POST',
-        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+step2Token,'Prefer':'return=representation'},
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY),'Prefer':'return=minimal'},
         body:JSON.stringify(partnerData)
       });
-      const rows=await r.json();
-      console.log('[submit] step2 status',r.status,'body',JSON.stringify(rows));
       if(!r.ok){
-        const detail=rows?.message||rows?.details||rows?.hint||JSON.stringify(rows);
-        const debugSuffix=' [debug: jwt.sub='+jwtClaims.sub.slice(0,8)+' uid='+String(userId).slice(0,8)+' role='+jwtClaims.role+' match='+(jwtClaims.sub===userId)+']';
-        showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':'')+debugSuffix);
+        const body=await r.json().catch(()=>({}));
+        const detail=body?.message||body?.details||body?.hint||JSON.stringify(body);
+        showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':''));
         resetBtn();return;
       }
-      partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
     }catch(e){
-      console.error('[submit] step2 fetch error',e.message||e);
       showSubmitError(T['err-partner-insert']+' ('+(e.message||'network error')+')');resetBtn();return;
     }
 
