@@ -585,7 +585,7 @@ async function submitForm(){
   try{
     // Step 1: Create Supabase Auth user
     console.log('[submit] step1: auth signup');
-    let userId;
+    let userId, accessToken;
     try{
       const r=await fetch(`${SUPA_URL}/auth/v1/signup`,{
         method:'POST',
@@ -604,6 +604,8 @@ async function submitForm(){
         resetBtn();return;
       }
       userId=d?.user?.id;
+      accessToken=d?.access_token||(d?.session?.access_token)||null;
+      console.log('[submit] step1 userId=',userId,'hasAccessToken=',!!accessToken);
       if(!userId){
         // Email confirmation required + duplicate → Supabase returns {user:null,session:null}
         const looksDupe=d?.user===null&&d?.session===null;
@@ -643,7 +645,7 @@ async function submitForm(){
       console.log('[submit] step2 payload',JSON.stringify(logPayload));
       const r=await fetch(`${SUPA_URL}/rest/v1/partners`,{
         method:'POST',
-        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'},
+        headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY),'Prefer':'return=representation'},
         body:JSON.stringify(partnerData)
       });
       const rows=await r.json();
