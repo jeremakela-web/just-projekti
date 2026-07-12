@@ -639,18 +639,24 @@ async function submitForm(){
         headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY),'Prefer':'return=minimal'},
         body:JSON.stringify(partnerData)
       });
+      console.log('[submit] step2 insert status',ins.status);
       if(!ins.ok){
         const body=await ins.json().catch(()=>({}));
         const detail=body?.message||body?.details||body?.hint||JSON.stringify(body);
         showSubmitError(T['err-partner-insert']+(detail?' ('+detail+')':''));
         resetBtn();return;
       }
-      // Fetch the auto-assigned id using user_id lookup (requires partners_select_own policy)
+      // Fetch the auto-assigned bigint id via user_id lookup (requires partners_select_own SELECT policy)
       const sel=await fetch(`${SUPA_URL}/rest/v1/partners?user_id=eq.${userId}&select=id`,{
         headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(accessToken||SUPA_KEY)}
       });
+      console.log('[submit] step2 id-lookup status',sel.status);
       const rows=await sel.json().catch(()=>[]);
       partnerId=Array.isArray(rows)?rows[0]?.id:rows?.id;
+      if(!partnerId){
+        showSubmitError(T['err-partner-insert']+' (id-lookup returned no row — ensure partners_select_own policy exists)');
+        resetBtn();return;
+      }
     }catch(e){
       showSubmitError(T['err-partner-insert']+' ('+(e.message||'network error')+')');resetBtn();return;
     }
@@ -673,7 +679,7 @@ async function submitForm(){
       if(d?.url){window.location.href=d.url;return;}
       throw new Error('no url');
     }catch(e){
-      console.error('[submit] step3 stripe error',e);
+      console.error('[submit] step3 stripe error — showing ok+note. step1 ok, step2 ok, partnerId=',partnerId,e);
       // Stripe failed: account + partners row are saved, show ok with note
       document.getElementById('form-wrap').style.display='none';
       document.getElementById('ok-screen').style.display='block';
